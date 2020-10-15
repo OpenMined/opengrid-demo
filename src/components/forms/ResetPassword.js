@@ -3,7 +3,8 @@ import * as yup from 'yup';
 
 import Form from './_form';
 import { validEmail } from './_validation';
-import { useFirebase } from '../firebase';
+
+import { useFirebase } from '../../firebase';
 
 export default () => {
   const firebase = useFirebase();

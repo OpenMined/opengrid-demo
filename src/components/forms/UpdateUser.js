@@ -3,7 +3,8 @@ import * as yup from 'yup';
 
 import Form from './_form';
 import { requiredString } from './_validation';
-import { useFirebase } from '../firebase';
+
+import { useFirebase } from '../../firebase';
 
 export default ({ user }) => {
   const firebase = useFirebase();
@@ -18,7 +19,7 @@ export default ({ user }) => {
       name: 'displayName',
       type: 'text',
       placeholder: 'Full name',
-      defaultValue: user.displayName || '',
+      defaultValue: user ? user.displayName : '',
     },
   ];
 

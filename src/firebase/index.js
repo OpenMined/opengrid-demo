@@ -1,10 +1,11 @@
 import { createContext, useContext } from 'react';
-import { toast } from 'react-toastify';
 
 import app from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/storage';
+
+import { toast } from '../components/Toast';
 
 export const FirebaseContext = createContext(null);
 export const useFirebase = () => useContext(FirebaseContext);
@@ -25,14 +26,17 @@ class Firebase {
     this.auth = app.auth();
     this.db = app.firestore();
     this.storage = app.storage();
+
+    this.user = this.auth.currentUser;
   }
 
   // Auth
+  setUser = (user) => (this.user = user);
   signup = (email, password) =>
     this.auth
       .createUserWithEmailAndPassword(email, password)
       .then(() =>
-        this.auth.currentUser
+        this.user
           .sendEmailVerification()
           .then(() => toast.success('Signup successful, welcome to OpenGrid!'))
           .catch(({ message }) => toast.error(message))
@@ -58,13 +62,13 @@ class Firebase {
       .catch(({ message }) => toast.error(message));
 
   updatePassword = (password) =>
-    this.auth.currentUser
+    this.user
       .updatePassword(password)
       .then(() => toast.success('Password updated successfully!'))
       .catch(({ message }) => toast.error(message));
 
   updateUser = (data) =>
-    this.auth.currentUser
+    this.user
       .updateProfile(data)
       .then(() => toast.success('User profile updated successfully!'))
       .catch(({ message }) => toast.error(message));
@@ -73,15 +77,13 @@ class Firebase {
 
   // Storage
   uploadProfilePicture = (file) => {
-    const storageRef = this.storage.ref(
-      this.auth.currentUser.uid + '/photos/' + file.name
-    );
+    const storageRef = this.storage.ref(this.user.uid + '/photos/' + file.name);
 
     return storageRef
       .put(file)
       .then(() =>
         storageRef.getDownloadURL().then((photoURL) =>
-          this.auth.currentUser.updateProfile({
+          this.user.updateProfile({
             photoURL,
           })
         )

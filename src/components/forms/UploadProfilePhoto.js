@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
-import { useFirebase } from '../firebase';
-import FileUpload from '../components/file-upload';
+import FileUpload from '../FileUpload';
+import { useFirebase } from '../../firebase';
 
 export default () => {
   const firebase = useFirebase();

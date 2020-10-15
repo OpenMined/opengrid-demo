@@ -2,16 +2,22 @@ import React from 'react';
 import * as yup from 'yup';
 
 import Form from './_form';
-import { validEmail, validPassword } from './_validation';
-import { useFirebase } from '../firebase';
+import {
+  validEmail,
+  validPassword,
+  validMatchingPassword,
+} from './_validation';
+
+import { useFirebase } from '../../firebase';
 
 export default () => {
   const firebase = useFirebase();
-  const onSubmit = ({ email, password }) => firebase.signin(email, password);
+  const onSubmit = ({ email, password }) => firebase.signup(email, password);
 
   const schema = yup.object().shape({
     email: validEmail,
     password: validPassword,
+    passwordConfirm: validMatchingPassword('password'),
   });
 
   const fields = [
@@ -24,6 +30,11 @@ export default () => {
       name: 'password',
       type: 'password',
       placeholder: 'Password',
+    },
+    {
+      name: 'passwordConfirm',
+      type: 'password',
+      placeholder: 'Password confirmation',
     },
   ];
 

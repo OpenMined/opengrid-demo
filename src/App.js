@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { ToastContainer } from 'react-toastify';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 import { useFirebase } from './firebase';
+import { AppContext } from './context';
 
-import Signup from './forms/signup';
-import Signin from './forms/signin';
-import ResetPassword from './forms/reset-password';
-import UpdatePassword from './forms/update-password';
-import UpdateUser from './forms/update-user';
-import UploadProfilePhoto from './forms/upload-profile-photo';
+import Routes from './routes';
+import Header from './components/Header';
+import { ToastContainer } from './components/Toast';
 
-import 'react-toastify/dist/ReactToastify.css';
+/*
+TODO:
+- Add Suspense
+- Add ReactFire
+- Get FOUC and redirects fixed on React Router
+- ... move on with your life
+*/
 
 const App = () => {
   const firebase = useFirebase();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(firebase.user);
 
   useEffect(() => {
     firebase.auth.onAuthStateChanged((authUser) => {
@@ -23,23 +27,13 @@ const App = () => {
   }, [firebase.auth]);
 
   return (
-    <div>
-      {user && (
-        <img
-          style={{ width: 100, height: 100 }}
-          src={user.photoURL}
-          alt={user.displayName || user.email}
-        />
-      )}
-      {!user && <Signup />}
-      {!user && <Signin />}
-      {!user && <ResetPassword />}
-      {user && <UpdatePassword />}
-      {user && <UpdateUser user={user} />}
-      {user && <UploadProfilePhoto />}
-      {user && <button onClick={firebase.signout}>Sign out</button>}
-      <ToastContainer position="bottom-left" />
-    </div>
+    <AppContext.Provider value={{ user }}>
+      <Router>
+        <Header />
+        <Routes />
+        <ToastContainer position="bottom-left" />
+      </Router>
+    </AppContext.Provider>
   );
 };
 
