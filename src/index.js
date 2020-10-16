@@ -1,12 +1,9 @@
 import React from 'react';
 import { unstable_createRoot } from 'react-dom';
+import { FirebaseAppProvider } from 'reactfire';
 import { ThemeProvider, theme, CSSReset } from '@chakra-ui/core';
 
 import App from './App';
-// import Firebase, { FirebaseContext } from './firebase';
-import { FirebaseAppProvider } from 'reactfire';
-
-// const firebase = new Firebase();
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -30,19 +27,6 @@ const WrappedApp = () => (
     </FirebaseAppProvider>
   </React.StrictMode>
 );
-// const WrappedApp = () => (
-//   <React.StrictMode>
-//     <FirebaseContext.Provider value={firebase}>
-//       <ThemeProvider theme={theme}>
-//         <CSSReset />
-//         <App />
-//       </ThemeProvider>
-//     </FirebaseContext.Provider>
-//   </React.StrictMode>
-// );
 
-// Concurrent
+// Experimental concurrence mode in React
 unstable_createRoot(root).render(<WrappedApp />);
-
-// Not concurrent
-// render(<WrappedApp />, root);

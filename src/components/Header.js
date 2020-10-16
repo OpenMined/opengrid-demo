@@ -8,28 +8,82 @@ import {
   Avatar,
   useDisclosure,
 } from '@chakra-ui/core';
+import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import { useUser, useAuth } from 'reactfire';
 import { Link as RRDLink } from 'react-router-dom';
 
+import { toast } from './Toast';
 import Modal from './Modal';
+
 import SignIn from './forms/SignIn';
 import SignUp from './forms/SignUp';
+import ResetPassword from './forms/ResetPassword';
 
-import { useFirebase } from '../firebase';
-import { useAppContext } from '../context';
+export default () => {
+  const user = useUser();
+  const auth = useAuth();
+  const signout = () =>
+    auth
+      .signOut()
+      .then(() => toast.success('Come back soon!'))
+      .catch(({ message }) => toast.error(message));
 
-export default (props) => {
-  const { user } = useAppContext();
   const [show, setShow] = useState(false);
 
   const [modalContent, setModalContent] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const firebase = useFirebase();
-
-  const modalLinkClick = ({ dialog, ...link }) => {
-    setModalContent({ ...link, content: dialog });
+  const modalLinkClick = (content) => {
+    setModalContent(content);
     onOpen();
   };
+
+  const TextLink = ({ to, title }) => (
+    <Link to={to} as={RRDLink} mt={{ base: 4, md: 0 }} mr={6} display="block">
+      {title}
+    </Link>
+  );
+
+  const SignInButton = () => (
+    <Button
+      onClick={() =>
+        modalLinkClick({
+          title: 'Sign in',
+          content: (
+            <SignIn
+              callback={onClose}
+              onResetPassword={() =>
+                modalLinkClick({
+                  title: 'Reset Password',
+                  content: <ResetPassword />,
+                })
+              }
+            />
+          ),
+        })
+      }
+    >
+      Sign in
+    </Button>
+  );
+
+  const SignUpButton = () => (
+    <Button
+      onClick={() =>
+        modalLinkClick({
+          title: 'Sign up',
+          content: <SignUp callback={onClose} />,
+        })
+      }
+    >
+      Sign up
+    </Button>
+  );
+
+  const SignOutButton = () => <Button onClick={signout}>Sign out</Button>;
+
+  const UserAvatar = () => (
+    <Avatar src={user.photoURL} name={user.displayName || user.email} />
+  );
 
   return (
     <>
@@ -41,7 +95,6 @@ export default (props) => {
         padding="1.5rem"
         bg="teal.500"
         color="white"
-        {...props}
       >
         <Flex align="center" mr={5}>
           <Heading as="h1" size="lg">
@@ -50,90 +103,28 @@ export default (props) => {
             </Link>
           </Heading>
         </Flex>
-
         <Box
           display={{ base: 'block', md: 'none' }}
           onClick={() => setShow(!show)}
         >
-          <svg
-            fill="white"
-            width="12px"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <title>Menu</title>
-            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-          </svg>
+          {show ? <CloseIcon /> : <HamburgerIcon />}
         </Box>
-
         <Box
           display={{ base: show ? 'block' : 'none', md: 'flex' }}
           width={{ base: 'full', md: 'auto' }}
           alignItems="center"
           flexGrow={1}
         >
-          {/* {links.map((link, i) => {
-            const { title, path, dialog } = link;
-
-            if (dialog) {
-              return (
-                <Link
-                  key={i}
-                  onClick={() => modalLinkClick(link)}
-                  mt={{ base: 4, md: 0 }}
-                  mr={6}
-                  display="block"
-                >
-                  {title}
-                </Link>
-              );
-            }
-
-            if (path) {
-              return (
-                <Link
-                  key={i}
-                  as={RRDLink}
-                  mt={{ base: 4, md: 0 }}
-                  mr={6}
-                  display="block"
-                  to={path}
-                >
-                  {title}
-                </Link>
-              );
-            }
-
-            return null;
-          })} */}
+          {user && <TextLink to="/edit-user" title="Edit User" />}
         </Box>
-
         <Box
           display={{ base: show ? 'block' : 'none', md: 'block' }}
           mt={{ base: 4, md: 0 }}
         >
-          {user && <Button onClick={firebase.signout}>Sign out</Button>}
-          {user && (
-            <Avatar src={user.photoURL} name={user.displayName || user.email} />
-          )}
-          {!user && (
-            <Button
-              onClick={() =>
-                modalLinkClick({ title: 'Sign in', dialog: <SignIn /> })
-              }
-            >
-              Sign in
-            </Button>
-          )}
-          {!user && (
-            <Button
-              onClick={() =>
-                modalLinkClick({ title: 'Sign up', dialog: <SignUp /> })
-              }
-            >
-              Sign up
-            </Button>
-          )}
+          {user && <SignOutButton />}
+          {user && <UserAvatar />}
+          {!user && <SignInButton />}
+          {!user && <SignUpButton />}
         </Box>
       </Flex>
       <Modal isOpen={isOpen} onClose={onClose} {...modalContent} />

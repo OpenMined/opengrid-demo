@@ -1,5 +1,6 @@
 import React from 'react';
 import * as yup from 'yup';
+import { useAuth } from 'reactfire';
 
 import Form from './_form';
 import {
@@ -8,11 +9,21 @@ import {
   validMatchingPassword,
 } from './_validation';
 
-import { useFirebase } from '../../firebase';
+import { toast } from '../Toast';
 
-export default () => {
-  const firebase = useFirebase();
-  const onSubmit = ({ email, password }) => firebase.signup(email, password);
+export default ({ callback }) => {
+  const auth = useAuth();
+  const onSubmit = ({ email, password }) =>
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then(() =>
+        auth.currentUser
+          .sendEmailVerification()
+          .then(() => toast.success('Signup successful, welcome to OpenGrid!'))
+          .then(() => !!callback && callback())
+          .catch(({ message }) => toast.error(message))
+      )
+      .catch(({ message }) => toast.error(message));
 
   const schema = yup.object().shape({
     email: validEmail,

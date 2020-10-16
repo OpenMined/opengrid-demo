@@ -1,16 +1,21 @@
 import React from 'react';
 import * as yup from 'yup';
 import { Link } from '@chakra-ui/core';
-import { Link as RRDLink } from 'react-router-dom';
+import { useAuth } from 'reactfire';
 
 import Form from './_form';
 import { validEmail, validPassword } from './_validation';
 
-import { useFirebase } from '../../firebase';
+import { toast } from '../Toast';
 
-export default () => {
-  const firebase = useFirebase();
-  const onSubmit = ({ email, password }) => firebase.signin(email, password);
+export default ({ callback, onResetPassword }) => {
+  const auth = useAuth();
+  const onSubmit = ({ email, password }) =>
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then(() => toast.success('Welcome back!'))
+      .then(() => !!callback && callback())
+      .catch(({ message }) => toast.error(message));
 
   const schema = yup.object().shape({
     email: validEmail,
@@ -33,7 +38,7 @@ export default () => {
   return (
     <>
       <Form onSubmit={onSubmit} schema={schema} fields={fields} />
-      <Link as={RRDLink} to="/reset-password">
+      <Link onClick={() => !!onResetPassword && onResetPassword()}>
         Reset your password
       </Link>
     </>

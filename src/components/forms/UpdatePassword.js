@@ -1,14 +1,19 @@
 import React from 'react';
 import * as yup from 'yup';
+import { useUser } from 'reactfire';
 
 import Form from './_form';
 import { validPassword, validMatchingPassword } from './_validation';
 
-import { useFirebase } from '../../firebase';
+import { toast } from '../Toast';
 
 export default () => {
-  const firebase = useFirebase();
-  const onSubmit = ({ password }) => firebase.updatePassword(password);
+  const user = useUser();
+  const onSubmit = ({ password }) =>
+    user
+      .updatePassword(password)
+      .then(() => toast.success('Password updated successfully!'))
+      .catch(({ message }) => toast.error(message));
 
   const schema = yup.object().shape({
     password: validPassword,

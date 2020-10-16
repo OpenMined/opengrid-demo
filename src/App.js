@@ -1,59 +1,46 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { useFirestoreDocData, useFirestore, SuspenseWithPerf } from 'reactfire';
-
-import { useFirebase } from './firebase';
-import { AppContext } from './context';
+import React, { Suspense, useEffect, useState, useLayoutEffect } from 'react';
+import { Router } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import { useAnalytics } from 'reactfire';
 
 import Routes from './routes';
+
 import Header from './components/Header';
 import { ToastContainer } from './components/Toast';
+import Loading from './components/Loading';
 
-/*
-TODO:
-- Add Suspense
-- Add ReactFire
-- Get FOUC and redirects fixed on React Router
-- ... move on with your life
-*/
+const Analytics = ({ location }) => {
+  const analytics = useAnalytics();
 
-function Burrito() {
-  // lazy load the Firestore SDK and create a document reference
-  const burritoRef = useFirestore().collection('tryreactfire').doc('burrito');
+  useEffect(() => {
+    analytics.logEvent('page-view', { path_name: location.pathname });
+  }, [location.pathname, analytics]);
 
-  // subscribe to the doc. just one line!
-  const burrito = useFirestoreDocData(burritoRef);
+  return null;
+};
 
-  // get the value from the doc
-  const isYummy = burrito.yummy;
-
-  return <p>The burrito is {isYummy ? 'good' : 'bad'}</p>;
-}
+const history = createBrowserHistory();
 
 const App = () => {
-  // const firebase = useFirebase();
-  // const [user, setUser] = useState(firebase.user);
+  const [action, setAction] = useState(history.action);
+  const [location, setlocation] = useState(history.location);
 
-  // useEffect(() => {
-  //   firebase.auth.onAuthStateChanged((authUser) => {
-  //     authUser ? setUser(authUser) : setUser(null);
-  //   });
-  // }, [firebase.auth]);
+  useLayoutEffect(() => {
+    history.listen(({ location, action }) => {
+      setlocation(location);
+      setAction(action);
+    });
+  }, []);
 
   return (
-    // <AppContext.Provider value={{ user }}>
-    <Router>
-      <SuspenseWithPerf
-        fallback={'loading burrito status...'}
-        traceId={'load-burrito-status'}
-      >
-        <Burrito />
-      </SuspenseWithPerf>
-      {/* <Header /> */}
-      {/* <Routes /> */}
-      <ToastContainer position="bottom-left" />
+    <Router action={action} location={location} navigator={history}>
+      <Suspense fallback={<Loading />}>
+        <Analytics location={location} />
+        <Header />
+        <Routes />
+        <ToastContainer position="bottom-left" />
+      </Suspense>
     </Router>
-    // </AppContext.Provider>
   );
 };
 

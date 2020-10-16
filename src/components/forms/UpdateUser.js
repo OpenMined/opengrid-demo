@@ -1,14 +1,19 @@
 import React from 'react';
 import * as yup from 'yup';
+import { useUser } from 'reactfire';
 
 import Form from './_form';
 import { requiredString } from './_validation';
 
-import { useFirebase } from '../../firebase';
+import { toast } from '../Toast';
 
-export default ({ user }) => {
-  const firebase = useFirebase();
-  const onSubmit = (data) => firebase.updateUser(data);
+export default () => {
+  const user = useUser();
+  const onSubmit = (data) =>
+    user
+      .updateProfile(data)
+      .then(() => toast.success('User profile updated successfully!'))
+      .catch(({ message }) => toast.error(message));
 
   const schema = yup.object().shape({
     displayName: requiredString,
@@ -19,7 +24,7 @@ export default ({ user }) => {
       name: 'displayName',
       type: 'text',
       placeholder: 'Full name',
-      defaultValue: user ? user.displayName : '',
+      defaultValue: user.displayName || '',
     },
   ];
 
