@@ -23,11 +23,11 @@ const history = createBrowserHistory();
 
 const App = () => {
   const [action, setAction] = useState(history.action);
-  const [location, setlocation] = useState(history.location);
+  const [location, setLocation] = useState(history.location);
 
   useLayoutEffect(() => {
     history.listen(({ location, action }) => {
-      setlocation(location);
+      setLocation(location);
       setAction(action);
     });
   }, []);

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Heading,
+  Image,
   Flex,
   Link,
   Button,
@@ -18,6 +18,8 @@ import Modal from './Modal';
 import SignIn from './forms/SignIn';
 import SignUp from './forms/SignUp';
 import ResetPassword from './forms/ResetPassword';
+
+import logo from '../assets/logo.svg';
 
 export default () => {
   const user = useUser();
@@ -38,13 +40,25 @@ export default () => {
   };
 
   const TextLink = ({ to, title }) => (
-    <Link to={to} as={RRDLink} mt={{ base: 4, md: 0 }} mr={6} display="block">
+    <Link
+      to={to}
+      as={RRDLink}
+      mt={{ base: 4, md: 0 }}
+      mr={6}
+      textTransform="uppercase"
+      fontWeight="bold"
+      letterSpacing={1}
+      color="gray.800"
+      sx={{ '&:hover': { textDecoration: 'none', color: 'blue.500' } }}
+    >
       {title}
     </Link>
   );
 
   const SignInButton = () => (
     <Button
+      colorScheme="blue"
+      variant="outline"
       onClick={() =>
         modalLinkClick({
           title: 'Sign in',
@@ -68,6 +82,8 @@ export default () => {
 
   const SignUpButton = () => (
     <Button
+      colorScheme="blue"
+      ml={3}
       onClick={() =>
         modalLinkClick({
           title: 'Sign up',
@@ -79,10 +95,14 @@ export default () => {
     </Button>
   );
 
-  const SignOutButton = () => <Button onClick={signout}>Sign out</Button>;
+  const SignOutButton = () => (
+    <Button colorScheme="blue" variant="outline" onClick={signout}>
+      Sign out
+    </Button>
+  );
 
   const UserAvatar = () => (
-    <Avatar src={user.photoURL} name={user.displayName || user.email} />
+    <Avatar src={user.photoURL} name={user.displayName || user.email} ml={3} />
   );
 
   return (
@@ -92,17 +112,13 @@ export default () => {
         align="center"
         justify="space-between"
         wrap="wrap"
-        padding="1.5rem"
-        bg="teal.500"
-        color="white"
+        padding={3}
+        bg="gray.50"
+        shadow="base"
       >
-        <Flex align="center" mr={5}>
-          <Heading as="h1" size="lg">
-            <Link to="/" as={RRDLink}>
-              Chakra UI
-            </Link>
-          </Heading>
-        </Flex>
+        <Link to="/" as={RRDLink} ml={2} mr={6}>
+          <Image src={logo} alt="OpenGrid" width="48px" height="48px" />
+        </Link>
         <Box
           display={{ base: 'block', md: 'none' }}
           onClick={() => setShow(!show)}
@@ -118,7 +134,8 @@ export default () => {
           {user && <TextLink to="/edit-user" title="Edit User" />}
         </Box>
         <Box
-          display={{ base: show ? 'block' : 'none', md: 'block' }}
+          display={{ base: show ? 'flex' : 'none', md: 'flex' }}
+          alignItems="center"
           mt={{ base: 4, md: 0 }}
         >
           {user && <SignOutButton />}
