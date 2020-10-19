@@ -102,7 +102,13 @@ export default () => {
   );
 
   const UserAvatar = () => (
-    <Avatar src={user.photoURL} name={user.displayName || user.email} ml={3} />
+    <RRDLink to="edit-user">
+      <Avatar
+        src={user.photoURL}
+        name={user.displayName || user.email}
+        ml={3}
+      />
+    </RRDLink>
   );
 
   return (

@@ -43,7 +43,7 @@ export default ({ settings = {}, schema, onSubmit, fields }) => {
         }
 
         return (
-          <FormControl key={input.name} isInvalid={hasErrors}>
+          <FormControl key={input.name} isInvalid={hasErrors} mt={3}>
             {label && <FormLabel htmlFor={input.name}>{label}</FormLabel>}
             {ComposedInput}
             {hasErrors && (
@@ -55,7 +55,8 @@ export default ({ settings = {}, schema, onSubmit, fields }) => {
         );
       })}
       <Button
-        mt={4}
+        mt={3}
+        colorScheme="blue"
         disabled={!isDirty || (isDirty && !isValid)}
         isLoading={isSubmitting}
         type="submit"

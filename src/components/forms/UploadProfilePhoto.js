@@ -4,7 +4,7 @@ import { useStorage, useUser } from 'reactfire';
 import FileUpload from '../FileUpload';
 import { toast } from '../Toast';
 
-export default () => {
+export default ({ callback, placeholder, dragActive }) => {
   const storage = useStorage();
   const user = useUser();
   const onDrop = (files) => {
@@ -21,8 +21,15 @@ export default () => {
         )
       )
       .then(() => toast.success('Profile photo uploaded!'))
+      .then(() => !!callback && callback())
       .catch(({ message }) => toast.error(message));
   };
 
-  return <FileUpload onDrop={onDrop} />;
+  return (
+    <FileUpload
+      onDrop={onDrop}
+      placeholder={placeholder}
+      dragActive={dragActive}
+    />
+  );
 };

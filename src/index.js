@@ -1,6 +1,7 @@
 import React from 'react';
 import { unstable_createRoot } from 'react-dom';
 import { FirebaseAppProvider } from 'reactfire';
+import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider, theme, CSSReset } from '@chakra-ui/core';
 
 import App from './App';
@@ -20,10 +21,12 @@ const root = document.getElementById('root');
 const WrappedApp = () => (
   <React.StrictMode>
     <FirebaseAppProvider firebaseConfig={firebaseConfig}>
-      <ThemeProvider theme={theme}>
-        <CSSReset />
-        <App />
-      </ThemeProvider>
+      <HelmetProvider>
+        <ThemeProvider theme={theme}>
+          <CSSReset />
+          <App />
+        </ThemeProvider>
+      </HelmetProvider>
     </FirebaseAppProvider>
   </React.StrictMode>
 );
