@@ -9,6 +9,20 @@ import Header from './components/Header';
 import { ToastContainer } from './components/Toast';
 import Loading from './components/Loading';
 
+/*
+TODO:
+- Add dataset/model (same thing)
+- Edit dataset/model
+- Delete dataset/model
+- View individual dataset/model
+- Manage my datasets/models
+- Search for datasets/models
+- Schedule an appointment with dataset/model owner
+- Edit my appointments
+- Delete an appointment
+- View all my appointments (sent or received)
+*/
+
 const Analytics = ({ location }) => {
   const analytics = useAnalytics();
 
