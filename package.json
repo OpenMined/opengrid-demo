@@ -5,13 +5,10 @@
   "dependencies": {
     "@chakra-ui/core": "^1.0.0-rc.5",
     "@chakra-ui/icons": "^1.0.0-rc.5",
-    "@emotion/core": "^10.0.35",
-    "@emotion/styled": "^10.0.27",
     "@hookform/resolvers": "^1.0.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "emotion-theming": "^10.0.27",
     "firebase": "^7.23.0",
     "history": "^5.0.0",
     "react": "^0.0.0-experimental-4ead6b530",
