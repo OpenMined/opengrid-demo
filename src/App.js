@@ -6,12 +6,10 @@ import { useAnalytics } from 'reactfire';
 import Routes from './routes';
 
 import Header from './components/Header';
-import { ToastContainer } from './components/Toast';
 import Loading from './components/Loading';
 
 /*
 TODO:
-- Redo the toast styling to look like Chakra
 - Add dataset/model (same thing)
 - Edit dataset/model
 - Delete dataset/model
@@ -53,7 +51,6 @@ const App = () => {
         <Analytics location={location} />
         <Header />
         <Routes />
-        <ToastContainer position="bottom-left" />
       </Suspense>
     </Router>
   );

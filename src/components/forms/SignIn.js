@@ -6,16 +6,31 @@ import { useAuth } from 'reactfire';
 import Form from './_form';
 import { validEmail, validPassword } from './_validation';
 
-import { toast } from '../Toast';
+import useToast, { toastConfig } from '../Toast';
 
 export default ({ callback, onResetPassword }) => {
   const auth = useAuth();
+  const toast = useToast();
   const onSubmit = ({ email, password }) =>
     auth
       .signInWithEmailAndPassword(email, password)
-      .then(() => toast.success('Welcome back!'))
+      .then(() =>
+        toast({
+          ...toastConfig,
+          title: 'Sign in successful',
+          description: 'Welcome back!',
+          status: 'success',
+        })
+      )
       .then(() => !!callback && callback())
-      .catch(({ message }) => toast.error(message));
+      .catch(({ message }) =>
+        toast({
+          ...toastConfig,
+          title: 'Error',
+          description: message,
+          status: 'error',
+        })
+      );
 
   const schema = yup.object().shape({
     email: validEmail,

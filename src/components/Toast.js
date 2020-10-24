@@ -1,5 +1,9 @@
-import { ToastContainer, toast } from 'react-toastify';
+import { useToast } from '@chakra-ui/core';
 
-import 'react-toastify/dist/ReactToastify.css';
+export default useToast;
 
-export { ToastContainer, toast };
+export const toastConfig = {
+  position: 'bottom-left',
+  duration: 7000,
+  isClosable: true,
+};

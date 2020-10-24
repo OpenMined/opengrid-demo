@@ -5,15 +5,30 @@ import { useUser } from 'reactfire';
 import Form from './_form';
 import { requiredString } from './_validation';
 
-import { toast } from '../Toast';
+import useToast, { toastConfig } from '../Toast';
 
 export default () => {
   const user = useUser();
+  const toast = useToast();
   const onSubmit = (data) =>
     user
       .updateProfile(data)
-      .then(() => toast.success('User profile updated successfully!'))
-      .catch(({ message }) => toast.error(message));
+      .then(() =>
+        toast({
+          ...toastConfig,
+          title: 'User update successful',
+          description: 'Way to keep your account up to date!',
+          status: 'success',
+        })
+      )
+      .catch(({ message }) =>
+        toast({
+          ...toastConfig,
+          title: 'Error',
+          description: message,
+          status: 'error',
+        })
+      );
 
   const schema = yup.object().shape({
     displayName: requiredString,

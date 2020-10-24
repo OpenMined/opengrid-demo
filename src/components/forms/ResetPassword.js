@@ -5,15 +5,30 @@ import { useAuth } from 'reactfire';
 import Form from './_form';
 import { validEmail } from './_validation';
 
-import { toast } from '../Toast';
+import useToast, { toastConfig } from '../Toast';
 
 export default () => {
   const auth = useAuth();
+  const toast = useToast();
   const onSubmit = ({ email }) =>
     auth
       .sendPasswordResetEmail(email)
-      .then(() => toast.success(`Password reset issued, check ${email}.`))
-      .catch(({ message }) => toast.error(message));
+      .then(() =>
+        toast({
+          ...toastConfig,
+          title: 'Password reset successful',
+          description: `Password reset issued, check ${email}.`,
+          status: 'success',
+        })
+      )
+      .catch(({ message }) =>
+        toast({
+          ...toastConfig,
+          title: 'Error',
+          description: message,
+          status: 'error',
+        })
+      );
 
   const schema = yup.object().shape({
     email: validEmail,

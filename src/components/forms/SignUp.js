@@ -9,21 +9,43 @@ import {
   validMatchingPassword,
 } from './_validation';
 
-import { toast } from '../Toast';
+import useToast, { toastConfig } from '../Toast';
 
 export default ({ callback }) => {
   const auth = useAuth();
+  const toast = useToast();
   const onSubmit = ({ email, password }) =>
     auth
       .createUserWithEmailAndPassword(email, password)
       .then(() =>
         auth.currentUser
           .sendEmailVerification()
-          .then(() => toast.success('Signup successful, welcome to OpenGrid!'))
+          .then(() =>
+            toast({
+              ...toastConfig,
+              title: 'Sign up successful',
+              description: 'Welcome to OpenGrid!',
+              status: 'success',
+            })
+          )
           .then(() => !!callback && callback())
-          .catch(({ message }) => toast.error(message))
+          .catch(({ message }) =>
+            toast({
+              ...toastConfig,
+              title: 'Error',
+              description: message,
+              status: 'error',
+            })
+          )
       )
-      .catch(({ message }) => toast.error(message));
+      .catch(({ message }) =>
+        toast({
+          ...toastConfig,
+          title: 'Error',
+          description: message,
+          status: 'error',
+        })
+      );
 
   const schema = yup.object().shape({
     email: validEmail,

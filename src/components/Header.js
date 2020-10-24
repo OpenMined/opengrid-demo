@@ -12,7 +12,7 @@ import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import { useUser, useAuth } from 'reactfire';
 import { Link as RRDLink } from 'react-router-dom';
 
-import { toast } from './Toast';
+import useToast, { toastConfig } from './Toast';
 import Modal from './Modal';
 
 import SignIn from './forms/SignIn';
@@ -24,11 +24,26 @@ import logo from '../assets/logo.svg';
 export default () => {
   const user = useUser();
   const auth = useAuth();
+  const toast = useToast();
   const signout = () =>
     auth
       .signOut()
-      .then(() => toast.success('Come back soon!'))
-      .catch(({ message }) => toast.error(message));
+      .then(() =>
+        toast({
+          ...toastConfig,
+          title: 'Sign out successful',
+          description: 'Come back soon!',
+          status: 'success',
+        })
+      )
+      .catch(({ message }) =>
+        toast({
+          ...toastConfig,
+          title: 'Error',
+          description: message,
+          status: 'error',
+        })
+      );
 
   const [show, setShow] = useState(false);
 

@@ -5,15 +5,30 @@ import { useUser } from 'reactfire';
 import Form from './_form';
 import { validPassword, validMatchingPassword } from './_validation';
 
-import { toast } from '../Toast';
+import useToast, { toastConfig } from '../Toast';
 
 export default () => {
   const user = useUser();
+  const toast = useToast();
   const onSubmit = ({ password }) =>
     user
       .updatePassword(password)
-      .then(() => toast.success('Password updated successfully!'))
-      .catch(({ message }) => toast.error(message));
+      .then(() =>
+        toast({
+          ...toastConfig,
+          title: 'Password update successful',
+          description: 'Way to keep your account safe!',
+          status: 'success',
+        })
+      )
+      .catch(({ message }) =>
+        toast({
+          ...toastConfig,
+          title: 'Error',
+          description: message,
+          status: 'error',
+        })
+      );
 
   const schema = yup.object().shape({
     password: validPassword,
