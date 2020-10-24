@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/core';
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
@@ -16,12 +15,7 @@ export default ({
   description = DEFAULT_DESCRIPTION,
 }) => {
   return (
-    <Box
-      width={{ base: '100%', lg: '90%', xl: '75%' }}
-      px={{ base: 5, lg: 0 }}
-      mx="auto"
-      my={{ base: 5, lg: 6 }}
-    >
+    <>
       <Helmet
         defaultTitle={DEFAULT_TITLE}
         titleTemplate={`%s | ${DEFAULT_TITLE}`}
@@ -37,6 +31,6 @@ export default ({
         <meta name="description" content={description} />
       </Helmet>
       {children}
-    </Box>
+    </>
   );
 };

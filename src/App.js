@@ -11,6 +11,7 @@ import Loading from './components/Loading';
 
 /*
 TODO:
+- Redo the toast styling to look like Chakra
 - Add dataset/model (same thing)
 - Edit dataset/model
 - Delete dataset/model

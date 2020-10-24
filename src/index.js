@@ -2,9 +2,10 @@ import React from 'react';
 import { unstable_createRoot } from 'react-dom';
 import { FirebaseAppProvider } from 'reactfire';
 import { HelmetProvider } from 'react-helmet-async';
-import { ThemeProvider, theme, CSSReset } from '@chakra-ui/core';
+import { ChakraProvider } from '@chakra-ui/core';
 
 import App from './App';
+import theme from './theme';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -22,10 +23,9 @@ const WrappedApp = () => (
   <React.StrictMode>
     <FirebaseAppProvider firebaseConfig={firebaseConfig}>
       <HelmetProvider>
-        <ThemeProvider theme={theme}>
-          <CSSReset />
+        <ChakraProvider theme={theme}>
           <App />
-        </ThemeProvider>
+        </ChakraProvider>
       </HelmetProvider>
     </FirebaseAppProvider>
   </React.StrictMode>

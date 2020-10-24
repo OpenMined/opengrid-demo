@@ -38,7 +38,12 @@ export default ({ callback, onResetPassword }) => {
   return (
     <>
       <Form onSubmit={onSubmit} schema={schema} fields={fields} />
-      <Link onClick={() => !!onResetPassword && onResetPassword()}>
+      <Link
+        onClick={() => !!onResetPassword && onResetPassword()}
+        color="gray.700"
+        display="block"
+        mt={4}
+      >
         Reset your password
       </Link>
     </>

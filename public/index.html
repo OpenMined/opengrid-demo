@@ -3,10 +3,28 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="OpenGrid is a registry of private datasets available for training and inference. Schedule a Duet with the data owner today!"
-    />
+
+    <meta itemprop="name" content="%REACT_APP_TITLE%" />
+    <meta name="description" content="%REACT_APP_DESCRIPTION%" />
+    <meta itemprop="image" content="%PUBLIC_URL%/logo.png" />
+
+    <meta name="apple-mobile-web-app-title" content="%REACT_APP_TITLE%" />
+    <meta name="application-name" content="%REACT_APP_TITLE%" />
+    <meta name="msapplication-TileColor" content="#333333" />
+    <meta name="theme-color" content="#333333" />
+
+    <meta property="og:title" content="%REACT_APP_TITLE%" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="%PUBLIC_URL%/logo.png" />
+    <meta property="og:description" content="%REACT_APP_DESCRIPTION%" />
+    <meta property="og:site_name" content="%REACT_APP_TITLE%" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@openminedorg" />
+    <meta name="twitter:title" content="%REACT_APP_TITLE%" />
+    <meta name="twitter:description" content="%REACT_APP_DESCRIPTION%" />
+    <meta name="twitter:creator" content="@openminedorg" />
+    <meta name="twitter:image:src" content="%PUBLIC_URL%/logo.png" />
 
     <link
       rel="apple-touch-icon"
@@ -31,12 +49,10 @@
       href="%PUBLIC_URL%/safari-pinned-tab.svg"
       color="#333333"
     />
-    <meta name="apple-mobile-web-app-title" content="OpenGrid" />
-    <meta name="application-name" content="OpenGrid" />
-    <meta name="msapplication-TileColor" content="#333333" />
-    <meta name="theme-color" content="#333333" />
 
-    <title>OpenGrid</title>
+    <title>%REACT_APP_TITLE%</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Roboto:wght@400;700&family=Rubik:wght@500&display=swap" rel="stylesheet">
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

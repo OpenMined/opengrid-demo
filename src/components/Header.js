@@ -45,8 +45,9 @@ export default () => {
       as={RRDLink}
       mt={{ base: 4, md: 0 }}
       mr={6}
+      fontFamily="heading"
       textTransform="uppercase"
-      fontWeight="bold"
+      fontWeight="medium"
       letterSpacing={1}
       color="gray.800"
       sx={{ '&:hover': { textDecoration: 'none', color: 'blue.500' } }}
@@ -61,7 +62,7 @@ export default () => {
       variant="outline"
       onClick={() =>
         modalLinkClick({
-          title: 'Sign in',
+          title: 'Sign In',
           content: (
             <SignIn
               callback={onClose}
@@ -76,7 +77,7 @@ export default () => {
         })
       }
     >
-      Sign in
+      Sign In
     </Button>
   );
 
@@ -86,18 +87,18 @@ export default () => {
       ml={3}
       onClick={() =>
         modalLinkClick({
-          title: 'Sign up',
+          title: 'Sign Up',
           content: <SignUp callback={onClose} />,
         })
       }
     >
-      Sign up
+      Sign Up
     </Button>
   );
 
   const SignOutButton = () => (
     <Button colorScheme="blue" variant="outline" onClick={signout}>
-      Sign out
+      Sign Out
     </Button>
   );
 
