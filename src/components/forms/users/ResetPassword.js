@@ -1,23 +1,23 @@
 import React from 'react';
 import * as yup from 'yup';
-import { useUser } from 'reactfire';
+import { useAuth } from 'reactfire';
 
-import Form from './_form';
-import { requiredString } from './_validation';
+import Form from '../_form';
+import { validEmail } from '../_validation';
 
-import useToast, { toastConfig } from '../Toast';
+import useToast, { toastConfig } from '../../Toast';
 
 export default () => {
-  const user = useUser();
+  const auth = useAuth();
   const toast = useToast();
-  const onSubmit = (data) =>
-    user
-      .updateProfile(data)
+  const onSubmit = ({ email }) =>
+    auth
+      .sendPasswordResetEmail(email)
       .then(() =>
         toast({
           ...toastConfig,
-          title: 'User update successful',
-          description: 'Way to keep your account up to date!',
+          title: 'Password reset successful',
+          description: `Password reset issued, check ${email}.`,
           status: 'success',
         })
       )
@@ -31,15 +31,14 @@ export default () => {
       );
 
   const schema = yup.object().shape({
-    displayName: requiredString,
+    email: validEmail,
   });
 
   const fields = [
     {
-      name: 'displayName',
-      type: 'text',
-      placeholder: 'Full name',
-      defaultValue: user.displayName || '',
+      name: 'email',
+      type: 'email',
+      placeholder: 'Email address',
     },
   ];
 

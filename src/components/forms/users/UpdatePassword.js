@@ -2,10 +2,10 @@ import React from 'react';
 import * as yup from 'yup';
 import { useUser } from 'reactfire';
 
-import Form from './_form';
-import { validPassword, validMatchingPassword } from './_validation';
+import Form from '../_form';
+import { validPassword, validMatchingPassword } from '../_validation';
 
-import useToast, { toastConfig } from '../Toast';
+import useToast, { toastConfig } from '../../Toast';
 
 export default () => {
   const user = useUser();

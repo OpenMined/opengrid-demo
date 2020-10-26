@@ -1,7 +1,8 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
+  Box,
   Flex,
   FormErrorMessage,
   FormLabel,
@@ -11,9 +12,78 @@ import {
   Input,
   Button,
   SimpleGrid,
+  Text,
+  InputGroup,
+  InputRightElement,
 } from '@chakra-ui/core';
 
 import { capitalize } from '../../helpers';
+import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
+
+const createInput = ({ options, ...input }, register, control) => {
+  if (input.type === 'select') {
+    return (
+      <Select {...input} variant="filled" size="lg" ref={register}>
+        {options.map((option) => (
+          <option {...option} />
+        ))}
+      </Select>
+    );
+  } else if (input.type === 'textarea') {
+    return <Textarea {...input} variant="filled" size="lg" ref={register} />;
+  } else if (input.type === 'array') {
+    return <FieldArray {...input} control={control} register={register} />;
+  } else {
+    return <Input {...input} variant="filled" size="lg" ref={register} />;
+  }
+};
+
+const FieldArray = ({ name, max, fields, control, register, ...props }) => {
+  const fieldArray = useFieldArray({
+    control,
+    name,
+  });
+
+  const [canAppend, setCanAppend] = useState(true);
+
+  useEffect(() => {
+    if (fieldArray.fields.length >= max) setCanAppend(false);
+    else setCanAppend(true);
+  }, [fieldArray.fields, max]);
+
+  return (
+    <>
+      {fieldArray.fields.map((item, index) => (
+        <Box key={item.id}>
+          {fields.map((input) => {
+            const inputName = `${name}[${index}].${input.name}`;
+
+            return (
+              <InputGroup key={inputName} size="lg" mb={2}>
+                {createInput({ ...input, name: inputName }, register, control)}
+                <InputRightElement cursor="pointer">
+                  <DeleteIcon
+                    color="red.500"
+                    onClick={() => fieldArray.remove(index)}
+                  />
+                </InputRightElement>
+              </InputGroup>
+            );
+          })}
+        </Box>
+      ))}
+      <Button
+        onClick={fieldArray.append}
+        disabled={!canAppend}
+        colorScheme="blue"
+        mt={2}
+      >
+        <AddIcon mr={2} />
+        <Text>Add</Text>
+      </Button>
+    </>
+  );
+};
 
 export default ({
   settings = {},
@@ -25,6 +95,7 @@ export default ({
 }) => {
   const {
     register,
+    control,
     handleSubmit,
     errors,
     formState: { isDirty, isValid, isSubmitting },
@@ -32,28 +103,8 @@ export default ({
 
   const SPACING = 4;
 
-  const composeInput = ({ label, options, width = '100%', ...input }) => {
+  const composeInput = ({ label, ...input }) => {
     const hasErrors = errors.hasOwnProperty(input.name);
-
-    let ComposedInput;
-
-    if (input.type === 'select') {
-      ComposedInput = (
-        <Select {...input} variant="filled" size="lg" ref={register}>
-          {options.map((option) => (
-            <option {...option} />
-          ))}
-        </Select>
-      );
-    } else if (input.type === 'textarea') {
-      ComposedInput = (
-        <Textarea {...input} variant="filled" size="lg" ref={register} />
-      );
-    } else {
-      ComposedInput = (
-        <Input {...input} variant="filled" size="lg" ref={register} />
-      );
-    }
 
     return (
       <FormControl key={input.name} isInvalid={hasErrors} mt={SPACING}>
@@ -66,7 +117,7 @@ export default ({
             {label}
           </FormLabel>
         )}
-        {ComposedInput}
+        {createInput(input, register, control)}
         {hasErrors && (
           <FormErrorMessage>
             {capitalize(errors[input.name].message.split('_').join(' '))}

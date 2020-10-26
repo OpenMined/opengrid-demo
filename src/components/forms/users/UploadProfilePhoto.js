@@ -1,12 +1,13 @@
 import React from 'react';
-import { useStorage, useUser } from 'reactfire';
+import { useFirestore, useStorage, useUser } from 'reactfire';
 
-import FileUpload from '../FileUpload';
-import useToast, { toastConfig } from '../Toast';
+import FileUpload from '../../FileUpload';
+import useToast, { toastConfig } from '../../Toast';
 
 export default ({ callback, placeholder, dragActive }) => {
   const storage = useStorage();
   const user = useUser();
+  const db = useFirestore();
   const toast = useToast();
   const onDrop = (files) => {
     const file = files[0];
@@ -16,16 +17,19 @@ export default ({ callback, placeholder, dragActive }) => {
       .put(file)
       .then(() =>
         storageRef.getDownloadURL().then((photoURL) =>
-          user.updateProfile({
-            photoURL,
-          })
+          db.collection('users').doc(user.uid).set(
+            {
+              photoURL,
+            },
+            { merge: true }
+          )
         )
       )
       .then(() =>
         toast({
           ...toastConfig,
           title: 'Profile photo uploaded',
-          description: 'Way to keep your account up to date!',
+          description: 'Please refresh to see this change live...',
           status: 'success',
         })
       )

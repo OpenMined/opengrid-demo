@@ -1,15 +1,18 @@
 import React from 'react';
 import { Heading, Flex, Avatar, Text, Box } from '@chakra-ui/core';
-import { useUser } from 'reactfire';
+import { useUser, useFirestore, useFirestoreDocDataOnce } from 'reactfire';
 
-import Page from '../components/Page';
-import GridContainer from '../components/GridContainer';
-import UpdatePassword from '../components/forms/UpdatePassword';
-import UpdateUser from '../components/forms/UpdateUser';
-import UploadProfilePhoto from '../components/forms/UploadProfilePhoto';
+import Page from '../../components/Page';
+import GridContainer from '../../components/GridContainer';
+import UpdatePassword from '../../components/forms/users/UpdatePassword';
+import UpdateUser from '../../components/forms/users/UpdateUser';
+import UploadProfilePhoto from '../../components/forms/users/UploadProfilePhoto';
 
 export default () => {
   const user = useUser();
+  const db = useFirestore();
+  const userRef = db.collection('users').doc(user.uid);
+  const userData = useFirestoreDocDataOnce(userRef);
 
   return (
     <Page title="Edit User">
@@ -22,8 +25,8 @@ export default () => {
             placeholder={
               <Flex alignItems="center" cursor="pointer" mb={3}>
                 <Avatar
-                  src={user.photoURL}
-                  name={user.displayName || user.email}
+                  src={userData.photoURL}
+                  name={userData.displayName || userData.email}
                   size="lg"
                 />
                 <Text ml={4} color="gray.700" fontWeight="medium">

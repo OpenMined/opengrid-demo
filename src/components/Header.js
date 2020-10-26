@@ -9,15 +9,20 @@ import {
   useDisclosure,
 } from '@chakra-ui/core';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
-import { useUser, useAuth } from 'reactfire';
+import {
+  useUser,
+  useAuth,
+  useFirestore,
+  useFirestoreDocDataOnce,
+} from 'reactfire';
 import { Link as RRDLink } from 'react-router-dom';
 
 import useToast, { toastConfig } from './Toast';
 import Modal from './Modal';
 
-import SignIn from './forms/SignIn';
-import SignUp from './forms/SignUp';
-import ResetPassword from './forms/ResetPassword';
+import SignIn from './forms/users/SignIn';
+import SignUp from './forms/users/SignUp';
+import ResetPassword from './forms/users/ResetPassword';
 
 import logo from '../assets/logo.svg';
 
@@ -44,6 +49,10 @@ export default () => {
           status: 'error',
         })
       );
+
+  const db = useFirestore();
+  const userRef = db.collection('users').doc(user.uid);
+  const userData = useFirestoreDocDataOnce(userRef);
 
   const [show, setShow] = useState(false);
 
@@ -120,8 +129,8 @@ export default () => {
   const UserAvatar = () => (
     <RRDLink to="edit-user">
       <Avatar
-        src={user.photoURL}
-        name={user.displayName || user.email}
+        src={userData.photoURL}
+        name={userData.displayName || userData.email}
         ml={3}
       />
     </RRDLink>

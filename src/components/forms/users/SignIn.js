@@ -3,10 +3,10 @@ import * as yup from 'yup';
 import { Link } from '@chakra-ui/core';
 import { useAuth } from 'reactfire';
 
-import Form from './_form';
-import { validEmail, validPassword } from './_validation';
+import Form from '../_form';
+import { validEmail, validPassword } from '../_validation';
 
-import useToast, { toastConfig } from '../Toast';
+import useToast, { toastConfig } from '../../Toast';
 
 export default ({ callback, onResetPassword }) => {
   const auth = useAuth();

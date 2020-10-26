@@ -2,14 +2,14 @@ import React from 'react';
 import * as yup from 'yup';
 import { useAuth } from 'reactfire';
 
-import Form from './_form';
+import Form from '../_form';
 import {
   validEmail,
   validPassword,
   validMatchingPassword,
-} from './_validation';
+} from '../_validation';
 
-import useToast, { toastConfig } from '../Toast';
+import useToast, { toastConfig } from '../../Toast';
 
 export default ({ callback }) => {
   const auth = useAuth();

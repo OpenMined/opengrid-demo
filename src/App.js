@@ -10,16 +10,16 @@ import Loading from './components/Loading';
 
 /*
 TODO:
-- Add dataset/model (same thing)
+- View individual dataset/model
 - Edit dataset/model
 - Delete dataset/model
-- View individual dataset/model
-- Manage my datasets/models
 - Search for datasets/models
 - Schedule an appointment with dataset/model owner
+- Add model equialent for dataset
 - Edit my appointments
 - Delete an appointment
 - View all my appointments (sent or received)
+- Test all rules to make sure everything is correct
 */
 
 const Analytics = ({ location }) => {
