@@ -6,9 +6,13 @@ import {
   Link,
   Button,
   Avatar,
+  Menu,
+  MenuItem,
+  MenuList,
+  MenuButton,
   useDisclosure,
 } from '@chakra-ui/core';
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import { HamburgerIcon, CloseIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import {
   useUser,
   useAuth,
@@ -25,6 +29,23 @@ import SignUp from './forms/users/SignUp';
 import ResetPassword from './forms/users/ResetPassword';
 
 import logo from '../assets/logo.svg';
+
+const UserAvatar = ({ user }) => {
+  const db = useFirestore();
+  const userData = useFirestoreDocDataOnce(
+    db.collection('users').doc(user.uid)
+  );
+
+  return (
+    <RRDLink to="/edit-user">
+      <Avatar
+        src={userData.photoURL}
+        name={userData.displayName || userData.email}
+        ml={3}
+      />
+    </RRDLink>
+  );
+};
 
 export default () => {
   const user = useUser();
@@ -49,10 +70,6 @@ export default () => {
           status: 'error',
         })
       );
-
-  const db = useFirestore();
-  const userRef = db.collection('users').doc(user.uid);
-  const userData = useFirestoreDocDataOnce(userRef);
 
   const [show, setShow] = useState(false);
 
@@ -126,16 +143,6 @@ export default () => {
     </Button>
   );
 
-  const UserAvatar = () => (
-    <RRDLink to="edit-user">
-      <Avatar
-        src={userData.photoURL}
-        name={userData.displayName || userData.email}
-        ml={3}
-      />
-    </RRDLink>
-  );
-
   return (
     <>
       <Flex
@@ -147,8 +154,8 @@ export default () => {
         bg="gray.50"
         shadow="base"
       >
-        <Link to="/" as={RRDLink} ml={2} mr={6}>
-          <Image src={logo} alt="OpenGrid" width="48px" height="48px" />
+        <Link to="/" as={RRDLink} ml={2} mr={4}>
+          <Image src={logo} alt="OpenGrid" width="40px" height="40px" />
         </Link>
         <Box
           display={{ base: 'block', md: 'none' }}
@@ -162,7 +169,29 @@ export default () => {
           alignItems="center"
           flexGrow={1}
         >
-          {user && <TextLink to="/edit-user" title="Edit User" />}
+          {user && (
+            <Menu>
+              <MenuButton
+                as={Button}
+                colorScheme="blue"
+                mt={{ base: 4, md: 0 }}
+                mr={6}
+                rightIcon={<ChevronDownIcon />}
+              >
+                Create New
+              </MenuButton>
+              <MenuList>
+                <MenuItem as={RRDLink} to="/datasets/new">
+                  Dataset
+                </MenuItem>
+                <MenuItem as={RRDLink} to="/models/new">
+                  Model
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          )}
+          {user && <TextLink to="/datasets/me" title="My Datasets" />}
+          {user && <TextLink to="/models/me" title="My Models" />}
         </Box>
         <Box
           display={{ base: show ? 'flex' : 'none', md: 'flex' }}
@@ -170,7 +199,7 @@ export default () => {
           mt={{ base: 4, md: 0 }}
         >
           {user && <SignOutButton />}
-          {user && <UserAvatar />}
+          {user && <UserAvatar user={user} />}
           {!user && <SignInButton />}
           {!user && <SignUpButton />}
         </Box>

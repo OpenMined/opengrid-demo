@@ -38,7 +38,15 @@ const createInput = ({ options, ...input }, register, control) => {
   }
 };
 
-const FieldArray = ({ name, max, fields, control, register, ...props }) => {
+const FieldArray = ({
+  name,
+  max,
+  fields,
+  control,
+  register,
+  defaultValue,
+  ...props
+}) => {
   const fieldArray = useFieldArray({
     control,
     name,
@@ -60,7 +68,11 @@ const FieldArray = ({ name, max, fields, control, register, ...props }) => {
 
             return (
               <InputGroup key={inputName} size="lg" mb={2}>
-                {createInput({ ...input, name: inputName }, register, control)}
+                {createInput(
+                  { ...input, name: inputName, defaultValue: item.value },
+                  register,
+                  control
+                )}
                 <InputRightElement cursor="pointer">
                   <DeleteIcon
                     color="red.500"
@@ -93,13 +105,24 @@ export default ({
   submit,
   nextToSubmit,
 }) => {
+  const defVals = {};
+
+  fields.forEach(({ name, defaultValue }) => {
+    defVals[name] = defaultValue;
+  });
+
   const {
     register,
     control,
     handleSubmit,
     errors,
     formState: { isDirty, isValid, isSubmitting },
-  } = useForm({ ...settings, mode: 'onBlur', resolver: yupResolver(schema) });
+  } = useForm({
+    ...settings,
+    mode: 'onBlur',
+    resolver: yupResolver(schema),
+    defaultValues: defVals,
+  });
 
   const SPACING = 4;
 

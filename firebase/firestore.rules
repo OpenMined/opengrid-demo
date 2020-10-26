@@ -2,9 +2,17 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function incomingDataHasOnly(field) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([field])
+    }
+
     match /datasets/{dataset} {
+      function isDatasetOwner() {
+        return request.auth != null && request.auth.uid == resource.data.author
+      }
       allow read;
-      allow update, delete: if request.auth != null && request.auth.uid == dataset.author;
+      allow update: if isDatasetOwner() || (!isDatasetOwner() && incomingDataHasOnly('upvotes'));
+      allow delete: if isDatasetOwner();
       allow create: if request.auth != null; 
     }
     match /users/{user} {

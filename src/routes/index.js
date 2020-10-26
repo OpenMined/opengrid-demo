@@ -4,13 +4,13 @@ import { useUser } from 'reactfire';
 
 const Homepage = lazy(() => import('./Homepage'));
 const EditUser = lazy(() => import('./users/EditUser'));
-const MyDatasets = lazy(() => import('./datasets/MyDatasets'));
 const NewDataset = lazy(() => import('./datasets/NewDataset'));
+const MyDatasets = lazy(() => import('./datasets/MyDatasets'));
+const Dataset = lazy(() => import('./datasets/Dataset'));
+const EditDataset = lazy(() => import('./datasets/EditDataset'));
 const NoMatch = lazy(() => import('./NoMatch'));
 
 const Datasets = () => <div>Datasets</div>;
-const Dataset = () => <div>Dataset</div>;
-const EditDataset = () => <div>Edit Dataset</div>;
 
 const AuthRoute = (props) => {
   const user = useUser();
@@ -26,7 +26,7 @@ export default () => (
       <Route path="/" element={<Datasets />} />
       <AuthRoute path="new" element={<NewDataset />} />
       <AuthRoute path="me" element={<MyDatasets />} />
-      <Route path=":id">
+      <Route path=":uid">
         <Route path="/" element={<Dataset />} />
         <AuthRoute path="edit" element={<EditDataset />} />
       </Route>

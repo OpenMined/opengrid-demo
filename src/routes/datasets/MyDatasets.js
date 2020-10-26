@@ -6,12 +6,13 @@ import {
   useFirestoreDocDataOnce,
   useFirestoreCollectionData,
 } from 'reactfire';
-import { Heading, Box } from '@chakra-ui/core';
+import { Heading, Box, Button } from '@chakra-ui/core';
 
 import Loading from '../../components/Loading';
 import Page from '../../components/Page';
 import GridContainer from '../../components/GridContainer';
 import Dataset from '../../components/Dataset';
+import { Link } from 'react-router-dom';
 
 export default () => {
   const user = useUser();
@@ -34,11 +35,29 @@ export default () => {
           </Heading>
         </Box>
         <Box>
-          <SuspenseWithPerf fallback={<Loading />} traceId={'my-datasets'}>
-            {adjustedDatasets.map((dataset, i) => (
-              <Dataset {...dataset} key={i} mb={4} />
-            ))}
-          </SuspenseWithPerf>
+          {datasets.length > 0 && (
+            <SuspenseWithPerf fallback={<Loading />} traceId={'my-datasets'}>
+              {adjustedDatasets.map((dataset, i) => (
+                <Dataset {...dataset} key={i} mb={4} />
+              ))}
+            </SuspenseWithPerf>
+          )}
+          {datasets.length === 0 && (
+            <>
+              <Heading
+                as="span"
+                size="md"
+                color="gray.700"
+                display="block"
+                mb={4}
+              >
+                You have no datasets
+              </Heading>
+              <Button as={Link} to="/datasets/new">
+                Create a Dataset
+              </Button>
+            </>
+          )}
         </Box>
       </GridContainer>
     </Page>

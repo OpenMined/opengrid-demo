@@ -3,20 +3,20 @@ import { Heading, Box } from '@chakra-ui/core';
 
 import Page from '../../components/Page';
 import GridContainer from '../../components/GridContainer';
-import NewDataset from '../../components/forms/datasets/NewDataset';
+import ComposeDataset from '../../components/forms/datasets/ComposeDataset';
 import { useNavigate } from 'react-router-dom';
 
 export default () => {
   const navigate = useNavigate();
 
   return (
-    <Page title="Add New Dataset">
+    <Page title="Create New Dataset">
       <GridContainer isInitial>
-        <Box width={{ lg: '50%' }} mb={5}>
+        <Box width={{ lg: '50%' }}>
           <Heading as="h2" size="xl" mb={4}>
-            Add New Dataset
+            Create New Dataset
           </Heading>
-          <NewDataset callback={() => navigate('/datasets/me')} />
+          <ComposeDataset callback={() => navigate('/datasets/me')} />
         </Box>
       </GridContainer>
     </Page>
