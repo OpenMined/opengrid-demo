@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import {
   Flex,
   Heading,
@@ -8,17 +8,22 @@ import {
   Select,
   Button,
 } from '@chakra-ui/core';
+import { useNavigate } from 'react-router-dom';
 
 import GridContainer from '../components/GridContainer';
 import waveform from '../assets/waveform.png';
+import { AppContext } from '../App';
 
 export default () => {
-  const [search, setSearch] = useState('');
-  const [mode, setMode] = useState('datasets');
+  const { search, setSearch, mode, setMode } = useContext(AppContext);
+  const navigate = useNavigate();
 
-  const doSearch = () => {
-    console.log('SEARCH', search, mode);
-  };
+  const doSearch = () =>
+    navigate(
+      `/search?search=${encodeURIComponent(search)}&mode=${encodeURIComponent(
+        mode
+      )}`
+    );
 
   return (
     <Box
@@ -67,6 +72,7 @@ export default () => {
                 placeholder="Search for anything..."
                 flex="0 0 75%"
                 mr={4}
+                defaultValue={search}
                 onChange={({ target }) => setSearch(target.value)}
               />
               <Select

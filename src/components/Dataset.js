@@ -65,7 +65,7 @@ export default ({
               color="gray.500"
               display="inline"
             >
-              <Link as={RRDLink} to={`/datasets?search=${tag}`}>
+              <Link as={RRDLink} to={`/search?mode=datasets&tags=${tag}`}>
                 #{tag}
               </Link>
               {i + 1 < tags.length && <Text as="span">, </Text>}

@@ -109,7 +109,7 @@ export default () => {
           </Flex>
           <Flex mt={4}>
             {tags.map((t, i) => (
-              <Link to={`/datasets?search=${t}`} key={t}>
+              <Link to={`/search?mode=datasets&tags=${t}`} key={t}>
                 <Tag colorScheme="blue" mr={i + 1 < tags.length ? 2 : 0}>
                   #{t}
                 </Tag>
