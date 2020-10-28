@@ -20,6 +20,5 @@ jobs:
           projectId: opengrid-demo
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
-  upload_rules:
-    steps:
       - run: firebase deploy --only firestore:rules
+      - run: firebase deploy --only functions
