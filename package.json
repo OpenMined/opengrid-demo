@@ -12,6 +12,7 @@
     "algoliasearch": "^4.5.1",
     "dayjs": "^1.9.4",
     "firebase": "^7.23.0",
+    "framer-motion": "^2.9.4",
     "history": "^5.0.0",
     "react": "^0.0.0-experimental-4ead6b530",
     "react-dom": "^0.0.0-experimental-4ead6b530",
