@@ -10,7 +10,9 @@ import Loading from './components/Loading';
 
 /*
 TODO:
+- Get rid of contact_email field and make it a checkbox to use the email on the authenticated user (not a separate value)
 - Add Calendly integration
+- If they don't have a Calendly integration, show the email, otherwise show Calendly only
 - Test all rules to make sure everything is correct
 - Create stub data and test out all functionality
 - Do responsive fixes
