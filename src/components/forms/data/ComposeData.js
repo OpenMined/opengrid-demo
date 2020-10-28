@@ -18,6 +18,10 @@ import { requiredString, arraySize } from '../_validation';
 import useToast, { toastConfig } from '../../Toast';
 
 export default ({ data, uid, callback }) => {
+  const PAGE_MODE = window.location.pathname.includes('datasets')
+    ? 'datasets'
+    : 'models';
+
   const [mode, setMode] = useState('create');
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -38,7 +42,7 @@ export default ({ data, uid, callback }) => {
         title: 'Error',
         description: `You must be signed in to ${
           mode ? 'add a new' : 'edit a'
-        } dataset`,
+        } ${PAGE_MODE.slice(0, -1)}`,
         status: 'error',
       });
 
@@ -57,13 +61,15 @@ export default ({ data, uid, callback }) => {
       d.updated_at = d.created_at;
 
       return db
-        .collection('datasets')
+        .collection(PAGE_MODE)
         .add(d)
         .then(() =>
           toast({
             ...toastConfig,
-            title: 'Dataset added',
-            description: `We've added your dataset "${d.name}"`,
+            title: `${PAGE_MODE === 'datasets' ? 'Dataset' : 'Model'} added`,
+            description: `We've added your ${PAGE_MODE.slice(0, -1)} "${
+              d.name
+            }"`,
             status: 'success',
           })
         )
@@ -80,14 +86,16 @@ export default ({ data, uid, callback }) => {
       d.updated_at = firebase.firestore.Timestamp.now();
 
       return db
-        .collection('datasets')
+        .collection(PAGE_MODE)
         .doc(uid)
         .set(d, { merge: true })
         .then(() =>
           toast({
             ...toastConfig,
-            title: 'Dataset update',
-            description: `We've updated your dataset "${d.name}"`,
+            title: `${PAGE_MODE === 'datasets' ? 'Dataset' : 'Model'} updated`,
+            description: `We've updated your ${PAGE_MODE.slice(0, -1)} "${
+              d.name
+            }"`,
             status: 'success',
           })
         )
@@ -103,16 +111,18 @@ export default ({ data, uid, callback }) => {
     }
   };
 
-  const onDeleteDataset = () =>
+  const onDeleteData = () =>
     db
-      .collection('datasets')
+      .collection(PAGE_MODE)
       .doc(uid)
       .delete()
       .then(() =>
         toast({
           ...toastConfig,
-          title: 'Dataset deleted',
-          description: `We've deleted your dataset "${data.name}"`,
+          title: `${PAGE_MODE === 'datasets' ? 'Dataset' : 'Model'} deleted`,
+          description: `We've deleted your ${PAGE_MODE.slice(0, -1)} "${
+            data.name
+          }"`,
           status: 'success',
         })
       )
@@ -140,16 +150,19 @@ export default ({ data, uid, callback }) => {
     {
       name: 'name',
       type: 'text',
-      placeholder: 'Type of the name of your dataset...',
-      label: 'Name of Dataset',
+      placeholder: `Type of the name of your ${PAGE_MODE.slice(0, -1)}...`,
+      label: `Name of ${PAGE_MODE === 'datasets' ? 'Dataset' : 'Model'}`,
       defaultValue: data && data.name,
     },
     {
       name: 'description',
       type: 'textarea',
-      placeholder: 'Write a few sentences or paragraphs about your dataset...',
+      placeholder: `Write a few sentences or paragraphs about your ${PAGE_MODE.slice(
+        0,
+        -1
+      )}...`,
       label: 'Description',
-      defaultValue: data && data.description,
+      defaultValue: data && data.description.split('<br />').join('\n'),
     },
     {
       name: 'tags',
@@ -182,7 +195,7 @@ export default ({ data, uid, callback }) => {
               onClick={() => setIsDeleteOpen(true)}
               colorScheme="red"
             >
-              Delete Dataset
+              Delete {PAGE_MODE === 'datasets' ? 'Dataset' : 'Model'}
             </Button>
           ),
         }
@@ -205,17 +218,17 @@ export default ({ data, uid, callback }) => {
           <AlertDialogOverlay>
             <AlertDialogContent>
               <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                Delete Dataset
+                Delete {PAGE_MODE === 'datasets' ? 'Dataset' : 'Model'}
               </AlertDialogHeader>
               <AlertDialogBody>
-                Are you sure you want to delete the "{data.name}" dataset? You
-                can't undo this action afterwards.
+                Are you sure you want to delete the "{data.name}" $
+                {PAGE_MODE.slice(0, -1)}? You can't undo this action afterwards.
               </AlertDialogBody>
               <AlertDialogFooter>
                 <Button ref={cancelRef} onClick={onDeleteClose}>
                   Cancel
                 </Button>
-                <Button colorScheme="red" onClick={onDeleteDataset} ml={3}>
+                <Button colorScheme="red" onClick={onDeleteData} ml={3}>
                   Delete
                 </Button>
               </AlertDialogFooter>

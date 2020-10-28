@@ -12,6 +12,7 @@ const TRUNCATE = 120;
 const filterDescription = (d) => d.split('<br />').join(' ');
 
 export default ({
+  mode,
   name,
   description,
   author,
@@ -22,10 +23,16 @@ export default ({
   uid,
   ...props
 }) => {
+  const PAGE_MODE =
+    mode || window.location.pathname.includes('datasets')
+      ? 'datasets'
+      : 'models';
+
   description = filterDescription(description);
+
   return (
-    <Box bg="white" shadow="md" borderRadius="md" p={4} {...props}>
-      <RRDLink to={`/datasets/${uid}`}>
+    <Box bg="white" shadow="md" borderRadius="md" p={6} {...props}>
+      <RRDLink to={`/${PAGE_MODE}/${uid}`}>
         <Heading as="h3" size="md" mb={2}>
           {name}
         </Heading>
@@ -37,10 +44,14 @@ export default ({
       </Text>
       <Flex justify="space-between" align="center">
         <Flex>
-          <Flex align="center" mr={6}>
-            <Avatar src={author.photoURL} size="xs" mr={2} />
-            <Text fontWeight="bold">{author.displayName}</Text>
-          </Flex>
+          {typeof author !== 'string' && (
+            <Flex align="center" mr={6}>
+              <Avatar src={author.photoURL} size="xs" mr={2} />
+              <Text fontWeight="bold">
+                {author.first_name} {author.last_name}
+              </Text>
+            </Flex>
+          )}
           <Flex align="center" mr={6}>
             <TimeIcon mr={2} color="gray.500" />
             <Text color="gray.700">
@@ -65,7 +76,7 @@ export default ({
               color="gray.500"
               display="inline"
             >
-              <Link as={RRDLink} to={`/search?mode=datasets&tags=${tag}`}>
+              <Link as={RRDLink} to={`/search?search=${tag}&mode=${PAGE_MODE}`}>
                 #{tag}
               </Link>
               {i + 1 < tags.length && <Text as="span">, </Text>}

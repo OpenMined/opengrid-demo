@@ -10,13 +10,11 @@ import Loading from './components/Loading';
 
 /*
 TODO:
-- Add dataset equialent for models
-- Schedule an appointment with dataset/model owner
-- Edit my appointments
-- Delete an appointment
-- View all my appointments (sent or received)
+- Add Calendly integration
 - Test all rules to make sure everything is correct
+- Create stub data and test out all functionality
 - Do responsive fixes
+- Deploy live and make sure there are no major issues
 */
 
 const Analytics = ({ location }) => {

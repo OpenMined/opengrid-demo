@@ -16,14 +16,13 @@ import {
   Select,
   Text,
   Heading,
-  Link,
 } from '@chakra-ui/core';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import algoliasearch from 'algoliasearch';
 
-import Dataset from '../components/Dataset';
+import Data from '../components/Data';
 import Page from '../components/Page';
 import GridContainer from '../components/GridContainer';
 
@@ -158,24 +157,19 @@ export default () => {
       <GridContainer isInitial>
         <Box>
           {results.length > 0 &&
-            results.map((dataset, i) => (
-              <Dataset {...dataset} key={i} mb={4} />
+            results.map((data, i) => (
+              <Data {...data} mode={mode} key={i} mb={4} />
             ))}
           {results.length === 0 && (
-            <>
-              <Heading
-                as="span"
-                size="md"
-                color="gray.700"
-                display="block"
-                mb={4}
-              >
-                You have no datasets
-              </Heading>
-              <Button as={Link} to="/datasets/new">
-                Create a Dataset
-              </Button>
-            </>
+            <Heading
+              as="span"
+              size="md"
+              color="gray.700"
+              display="block"
+              mb={4}
+            >
+              There are no {mode} for this search query.
+            </Heading>
           )}
         </Box>
       </GridContainer>

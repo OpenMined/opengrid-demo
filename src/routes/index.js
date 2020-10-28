@@ -5,10 +5,10 @@ import { useUser } from 'reactfire';
 const Homepage = lazy(() => import('./Homepage'));
 const EditUser = lazy(() => import('./users/EditUser'));
 const Search = lazy(() => import('./Search'));
-const NewDataset = lazy(() => import('./datasets/NewDataset'));
-const MyDatasets = lazy(() => import('./datasets/MyDatasets'));
-const Dataset = lazy(() => import('./datasets/Dataset'));
-const EditDataset = lazy(() => import('./datasets/EditDataset'));
+const NewData = lazy(() => import('./data/NewData'));
+const MyData = lazy(() => import('./data/MyData'));
+const Data = lazy(() => import('./data/Data'));
+const EditData = lazy(() => import('./data/EditData'));
 const NoMatch = lazy(() => import('./NoMatch'));
 
 const AuthRoute = (props) => {
@@ -23,11 +23,19 @@ export default () => (
     <AuthRoute path="edit-user" element={<EditUser />} />
     <Route path="search" element={<Search />} />
     <Route path="datasets">
-      <AuthRoute path="new" element={<NewDataset />} />
-      <AuthRoute path="me" element={<MyDatasets />} />
+      <AuthRoute path="new" element={<NewData />} />
+      <AuthRoute path="me" element={<MyData />} />
       <Route path=":uid">
-        <Route path="/" element={<Dataset />} />
-        <AuthRoute path="edit" element={<EditDataset />} />
+        <Route path="/" element={<Data />} />
+        <AuthRoute path="edit" element={<EditData />} />
+      </Route>
+    </Route>
+    <Route path="models">
+      <AuthRoute path="new" element={<NewData />} />
+      <AuthRoute path="me" element={<MyData />} />
+      <Route path=":uid">
+        <Route path="/" element={<Data />} />
+        <AuthRoute path="edit" element={<EditData />} />
       </Route>
     </Route>
     <Route path="*" element={<NoMatch />} />

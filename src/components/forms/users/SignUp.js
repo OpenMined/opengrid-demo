@@ -1,6 +1,6 @@
 import React from 'react';
 import * as yup from 'yup';
-import { useAuth } from 'reactfire';
+import { useAuth, useFirestore } from 'reactfire';
 
 import Form from '../_form';
 import {
@@ -13,6 +13,7 @@ import useToast, { toastConfig } from '../../Toast';
 
 export default ({ callback }) => {
   const auth = useAuth();
+  const db = useFirestore();
   const toast = useToast();
   const onSubmit = ({ email, password }) =>
     auth
@@ -21,14 +22,30 @@ export default ({ callback }) => {
         auth.currentUser
           .sendEmailVerification()
           .then(() =>
-            toast({
-              ...toastConfig,
-              title: 'Sign up successful',
-              description: 'Welcome to OpenGrid!',
-              status: 'success',
-            })
+            db
+              .collection('users')
+              .doc(auth.currentUser.uid)
+              .set({
+                contact_email: auth.currentUser.email || '',
+              })
+              .then(() =>
+                toast({
+                  ...toastConfig,
+                  title: 'Sign up successful',
+                  description: 'Welcome to OpenGrid!',
+                  status: 'success',
+                })
+              )
+              .then(() => !!callback && callback())
+              .catch(({ message }) =>
+                toast({
+                  ...toastConfig,
+                  title: 'Error',
+                  description: message,
+                  status: 'error',
+                })
+              )
           )
-          .then(() => !!callback && callback())
           .catch(({ message }) =>
             toast({
               ...toastConfig,

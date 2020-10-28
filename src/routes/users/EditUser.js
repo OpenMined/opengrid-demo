@@ -26,7 +26,10 @@ export default () => {
               <Flex alignItems="center" cursor="pointer" mb={3}>
                 <Avatar
                   src={userData.photoURL}
-                  name={userData.displayName || userData.email}
+                  name={
+                    userData.first_name + ' ' + userData.last_name ||
+                    userData.email
+                  }
                   size="lg"
                 />
                 <Text ml={4} color="gray.700" fontWeight="medium">
@@ -41,6 +44,11 @@ export default () => {
             Profile Information
           </Heading>
           <UpdateUser />
+          <Text size="sm" color="gray.700" mt={2}>
+            <strong>Note:</strong> Changing the email address above is only for
+            the email you would like to be contacted at, not the email address
+            you use to sign in.
+          </Text>
         </Box>
         <Box width={{ lg: '50%' }}>
           <Heading as="h3" size="lg" mb={4}>

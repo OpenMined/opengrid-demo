@@ -42,7 +42,7 @@ const UserAvatar = ({ user }) => {
     <RRDLink to="/edit-user">
       <Avatar
         src={userData.photoURL}
-        name={userData.displayName || userData.email}
+        name={userData.first_name + ' ' + userData.last_name || userData.email}
         ml={3}
       />
     </RRDLink>

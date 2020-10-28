@@ -5,33 +5,37 @@ import { useFirestore, useFirestoreDocDataOnce, useUser } from 'reactfire';
 
 import Page from '../../components/Page';
 import GridContainer from '../../components/GridContainer';
-import ComposeDataset from '../../components/forms/datasets/ComposeDataset';
+import ComposeData from '../../components/forms/data/ComposeData';
 import { useNavigate } from 'react-router-dom';
 
 export default (props) => {
+  const PAGE_MODE = window.location.pathname.includes('datasets')
+    ? 'datasets'
+    : 'models';
+
   const { uid } = useParams();
   const navigate = useNavigate();
   const user = useUser();
   const db = useFirestore();
 
-  const datasetRef = db.collection('datasets').doc(uid);
-  const datasetData = useFirestoreDocDataOnce(datasetRef);
+  const dataRef = db.collection(PAGE_MODE).doc(uid);
+  const dataData = useFirestoreDocDataOnce(dataRef);
 
   useEffect(() => {
-    if (datasetData.author !== user.uid) navigate('/');
-  }, [datasetData.author, user.uid, navigate]);
+    if (dataData.author !== user.uid) navigate('/');
+  }, [dataData.author, user.uid, navigate]);
 
   return (
-    <Page title="Edit Dataset">
+    <Page title={PAGE_MODE === 'datasets' ? 'Edit Dataset' : 'Edit Model'}>
       <GridContainer isInitial>
         <Box width={{ lg: '50%' }}>
           <Heading as="h2" size="xl" mb={4}>
-            Edit Dataset
+            {PAGE_MODE === 'datasets' ? 'Edit Dataset' : 'Edit Model'}
           </Heading>
-          <ComposeDataset
-            data={datasetData}
+          <ComposeData
+            data={dataData}
             uid={uid}
-            callback={() => navigate('/datasets/me')}
+            callback={() => navigate(`/${PAGE_MODE}/me`)}
           />
         </Box>
       </GridContainer>

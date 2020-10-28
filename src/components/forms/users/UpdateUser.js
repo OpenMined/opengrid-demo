@@ -37,15 +37,32 @@ export default () => {
   const userData = useFirestoreDocDataOnce(userRef);
 
   const schema = yup.object().shape({
-    displayName: requiredString,
+    first_name: requiredString,
+    last_name: requiredString,
   });
 
   const fields = [
+    [
+      {
+        name: 'first_name',
+        type: 'text',
+        label: 'Name',
+        placeholder: 'First name',
+        defaultValue: userData.first_name || '',
+      },
+      {
+        name: 'last_name',
+        type: 'text',
+        placeholder: 'Last name',
+        defaultValue: userData.last_name || '',
+      },
+    ],
     {
-      name: 'displayName',
+      name: 'contact_email',
       type: 'text',
-      placeholder: 'Full name',
-      defaultValue: userData.displayName || '',
+      label: 'Preferred contact',
+      placeholder: 'Email address',
+      defaultValue: userData.contact_email || '',
     },
   ];
 
