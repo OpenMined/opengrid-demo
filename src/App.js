@@ -10,7 +10,6 @@ import Loading from './components/Loading';
 
 /*
 TODO:
-- Search for datasets
 - Add dataset equialent for models
 - Schedule an appointment with dataset/model owner
 - Edit my appointments

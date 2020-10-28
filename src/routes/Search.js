@@ -15,11 +15,15 @@ import {
   FormLabel,
   Select,
   Text,
+  Heading,
+  Link,
 } from '@chakra-ui/core';
-import { UpDownIcon } from '@chakra-ui/icons';
+import { SettingsIcon } from '@chakra-ui/icons';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
+import algoliasearch from 'algoliasearch';
 
+import Dataset from '../components/Dataset';
 import Page from '../components/Page';
 import GridContainer from '../components/GridContainer';
 
@@ -29,17 +33,12 @@ export const SearchBox = () => {
   const [search, setSearch] = useState(searchParams.get('search') || '');
   const [mode, setMode] = useState(searchParams.get('mode') || 'datasets');
   const [tags, setTags] = useState(searchParams.get('tags') || '');
-  const [sort, setSort] = useState(searchParams.get('sort') || 'most-upvotes');
 
   useEffect(() => {
     const e = encodeURIComponent;
 
-    navigate(
-      `/search?search=${e(search)}&mode=${e(mode)}&tags=${e(tags)}&sort=${e(
-        sort
-      )}`
-    );
-  }, [search, mode, tags, sort, navigate]);
+    navigate(`/search?search=${e(search)}&mode=${e(mode)}&tags=${e(tags)}`);
+  }, [search, mode, tags, navigate]);
 
   return (
     <Flex align="center">
@@ -55,14 +54,14 @@ export const SearchBox = () => {
       <Popover>
         <PopoverTrigger>
           <Button variant="ghost">
-            <UpDownIcon mr={2} />
-            <Text>Filter & Sort</Text>
+            <SettingsIcon mr={2} />
+            <Text>Filters</Text>
           </Button>
         </PopoverTrigger>
         <PopoverContent>
           <PopoverArrow />
           <PopoverCloseButton />
-          <PopoverHeader>Filter & Sort</PopoverHeader>
+          <PopoverHeader>Filters</PopoverHeader>
           <PopoverBody>
             <FormControl id="mode" mb={2}>
               <FormLabel>Mode</FormLabel>
@@ -85,17 +84,6 @@ export const SearchBox = () => {
                 onChange={({ target }) => setTags(target.value)}
               />
             </FormControl>
-            <FormControl id="sort" mb={2}>
-              <FormLabel>Sort</FormLabel>
-              <Select
-                bg="white"
-                onChange={({ target }) => setSort(target.value)}
-                defaultValue={sort}
-              >
-                <option value="most-upvotes">Most Upvotes</option>
-                <option value="least-upvotes">Least Upvotes</option>
-              </Select>
-            </FormControl>
           </PopoverBody>
         </PopoverContent>
       </Popover>
@@ -103,12 +91,16 @@ export const SearchBox = () => {
   );
 };
 
+const algolia = algoliasearch(
+  process.env.REACT_APP_ALGOLIA_APP_ID,
+  process.env.REACT_APP_ALGOLIA_SEARCH_KEY
+);
+
 export default () => {
   const [searchParams] = useSearchParams();
   const search = searchParams.get('search');
   const mode = searchParams.get('mode');
   const tags = searchParams.get('tags');
-  const sort = searchParams.get('sort');
 
   const [results, setResults] = useState([]);
 
@@ -117,18 +109,74 @@ export default () => {
   const [debouncedTags] = useDebounce(tags, 500);
 
   useEffect(() => {
-    console.log('DO SEARCH', debouncedSearch, mode, debouncedTags, sort);
-  }, [debouncedSearch, mode, debouncedTags, sort]);
+    if (debouncedSearch) {
+      const arrayTags =
+        debouncedTags && debouncedTags !== ''
+          ? debouncedTags
+              .replace(/\s*,\s*/g, ',')
+              .split(' ')
+              .join('-')
+              .split(',')
+          : [];
+
+      const index = algolia.initIndex(mode);
+      const options = { hitsPerPage: 20 };
+
+      if (arrayTags.length > 0) options.tagFilters = [arrayTags];
+
+      index.search(debouncedSearch, options).then(({ hits }) => {
+        hits = hits.map((h) => {
+          const uid = h.objectID;
+          const created_at = {
+            seconds: h.created_at._seconds,
+            nanoseconds: h.created_at._nanoseconds,
+          };
+          const updated_at = {
+            seconds: h.created_at._seconds,
+            nanoseconds: h.created_at._nanoseconds,
+          };
+
+          delete h.objectID;
+          delete h._highlightResult;
+          delete h._tags;
+
+          return {
+            ...h,
+            uid,
+            created_at,
+            updated_at,
+          };
+        });
+
+        setResults(hits);
+      });
+    }
+  }, [debouncedSearch, mode, debouncedTags]);
 
   return (
     <Page title="Search Results">
       <GridContainer isInitial>
         <Box>
-          <p>{search}</p>
-          <p>{mode}</p>
-          <p>{tags}</p>
-          <p>{sort}</p>
-          {console.log(results)}
+          {results.length > 0 &&
+            results.map((dataset, i) => (
+              <Dataset {...dataset} key={i} mb={4} />
+            ))}
+          {results.length === 0 && (
+            <>
+              <Heading
+                as="span"
+                size="md"
+                color="gray.700"
+                display="block"
+                mb={4}
+              >
+                You have no datasets
+              </Heading>
+              <Button as={Link} to="/datasets/new">
+                Create a Dataset
+              </Button>
+            </>
+          )}
         </Box>
       </GridContainer>
     </Page>

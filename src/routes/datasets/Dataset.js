@@ -2,12 +2,7 @@ import React from 'react';
 import { Heading, Box, Flex, Avatar, Text, Tag, Button } from '@chakra-ui/core';
 import { TimeIcon } from '@chakra-ui/icons';
 import { useParams, Link } from 'react-router-dom';
-import {
-  useFirestore,
-  useFirestoreDocData,
-  useFirestoreDocDataOnce,
-  useUser,
-} from 'reactfire';
+import { useFirestore, useFirestoreDocDataOnce, useUser } from 'reactfire';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import * as firebase from 'firebase/app';
@@ -31,7 +26,7 @@ export default () => {
     updated_at,
     upvotes,
     tags,
-  } = useFirestoreDocData(datasetRef);
+  } = useFirestoreDocDataOnce(datasetRef);
 
   const authorRef = db.collection('users').doc(author);
   const authorData = useFirestoreDocDataOnce(authorRef);

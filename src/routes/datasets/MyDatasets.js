@@ -35,14 +35,14 @@ export default () => {
           </Heading>
         </Box>
         <Box>
-          {datasets.length > 0 && (
+          {adjustedDatasets.length > 0 && (
             <SuspenseWithPerf fallback={<Loading />} traceId={'my-datasets'}>
               {adjustedDatasets.map((dataset, i) => (
                 <Dataset {...dataset} key={i} mb={4} />
               ))}
             </SuspenseWithPerf>
           )}
-          {datasets.length === 0 && (
+          {adjustedDatasets.length === 0 && (
             <>
               <Heading
                 as="span"
