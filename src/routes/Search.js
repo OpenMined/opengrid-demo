@@ -1,59 +1,35 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  SuspenseWithPerf,
-  useUser,
-  useFirestore,
-  useFirestoreDocDataOnce,
-  useFirestoreCollectionData,
-} from 'reactfire';
-import { Heading, Box, Button } from '@chakra-ui/core';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+  Flex,
+  Button,
+  Box,
+  Input,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
+  FormControl,
+  FormLabel,
+  Select,
+  Text,
+} from '@chakra-ui/core';
+import { UpDownIcon } from '@chakra-ui/icons';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useDebounce } from 'use-debounce';
 
-import Loading from '../components/Loading';
 import Page from '../components/Page';
 import GridContainer from '../components/GridContainer';
-import Dataset from '../components/Dataset';
-import { AppContext } from '../App';
 
-export default () => {
-  const user = useUser();
-  const db = useFirestore();
-
+export const SearchBox = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const {
-    search,
-    setSearch,
-    mode,
-    setMode,
-    tags,
-    setTags,
-    sort,
-    setSort,
-  } = useContext(AppContext);
-
-  // TODO: The below breaks the search page... #awkward
-
-  const paramsSearch = searchParams.get('search') || '';
-  const paramsMode = searchParams.get('mode') || 'datasets';
-  const paramsTags = searchParams.get('tags') || '';
-  const paramsSort = searchParams.get('sort') || 'most-upvotes';
-
-  useEffect(() => {
-    setSearch(paramsSearch);
-    setMode(paramsMode);
-    setTags(paramsTags);
-    setSort(paramsSort);
-  }, [
-    setSearch,
-    setMode,
-    setTags,
-    setSort,
-    paramsSearch,
-    paramsMode,
-    paramsTags,
-    paramsSort,
-  ]);
+  const [search, setSearch] = useState(searchParams.get('search') || '');
+  const [mode, setMode] = useState(searchParams.get('mode') || 'datasets');
+  const [tags, setTags] = useState(searchParams.get('tags') || '');
+  const [sort, setSort] = useState(searchParams.get('sort') || 'most-upvotes');
 
   useEffect(() => {
     const e = encodeURIComponent;
@@ -66,32 +42,93 @@ export default () => {
   }, [search, mode, tags, sort, navigate]);
 
   return (
-    <Page title="My Datasets">
+    <Flex align="center">
+      <Input
+        type="text"
+        bg="white"
+        placeholder="Search for anything..."
+        mr={2}
+        width="320px"
+        defaultValue={search}
+        onChange={({ target }) => setSearch(target.value)}
+      />
+      <Popover>
+        <PopoverTrigger>
+          <Button variant="ghost">
+            <UpDownIcon mr={2} />
+            <Text>Filter & Sort</Text>
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <PopoverArrow />
+          <PopoverCloseButton />
+          <PopoverHeader>Filter & Sort</PopoverHeader>
+          <PopoverBody>
+            <FormControl id="mode" mb={2}>
+              <FormLabel>Mode</FormLabel>
+              <Select
+                bg="white"
+                onChange={({ target }) => setMode(target.value)}
+                defaultValue={mode}
+              >
+                <option value="datasets">Datasets</option>
+                <option value="models">Models</option>
+              </Select>
+            </FormControl>
+            <FormControl id="tags" mb={2}>
+              <FormLabel>Tags</FormLabel>
+              <Input
+                type="text"
+                bg="white"
+                placeholder="Search for (comma-separated) tags..."
+                defaultValue={tags}
+                onChange={({ target }) => setTags(target.value)}
+              />
+            </FormControl>
+            <FormControl id="sort" mb={2}>
+              <FormLabel>Sort</FormLabel>
+              <Select
+                bg="white"
+                onChange={({ target }) => setSort(target.value)}
+                defaultValue={sort}
+              >
+                <option value="most-upvotes">Most Upvotes</option>
+                <option value="least-upvotes">Least Upvotes</option>
+              </Select>
+            </FormControl>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
+    </Flex>
+  );
+};
+
+export default () => {
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get('search');
+  const mode = searchParams.get('mode');
+  const tags = searchParams.get('tags');
+  const sort = searchParams.get('sort');
+
+  const [results, setResults] = useState([]);
+
+  // Only debounce search and tags because the other inputs are select and less likely to constant updates
+  const [debouncedSearch] = useDebounce(search, 500);
+  const [debouncedTags] = useDebounce(tags, 500);
+
+  useEffect(() => {
+    console.log('DO SEARCH', debouncedSearch, mode, debouncedTags, sort);
+  }, [debouncedSearch, mode, debouncedTags, sort]);
+
+  return (
+    <Page title="Search Results">
       <GridContainer isInitial>
         <Box>
-          {/* {datasets.length > 0 && (
-            <SuspenseWithPerf fallback={<Loading />} traceId={'search'}>
-              {adjustedDatasets.map((dataset, i) => (
-                <Dataset {...dataset} key={i} mb={4} />
-              ))}
-            </SuspenseWithPerf>
-          )}
-          {datasets.length === 0 && (
-            <>
-              <Heading
-                as="span"
-                size="md"
-                color="gray.700"
-                display="block"
-                mb={4}
-              >
-                You have no datasets
-              </Heading>
-              <Button as={Link} to="/datasets/new">
-                Create a Dataset
-              </Button>
-            </>
-          )} */}
+          <p>{search}</p>
+          <p>{mode}</p>
+          <p>{tags}</p>
+          <p>{sort}</p>
+          {console.log(results)}
         </Box>
       </GridContainer>
     </Page>

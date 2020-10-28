@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
 import {
   Flex,
   Heading,
@@ -12,10 +12,10 @@ import { useNavigate } from 'react-router-dom';
 
 import GridContainer from '../components/GridContainer';
 import waveform from '../assets/waveform.png';
-import { AppContext } from '../App';
 
 export default () => {
-  const { search, setSearch, mode, setMode } = useContext(AppContext);
+  const [search, setSearch] = useState('');
+  const [mode, setMode] = useState('datasets');
   const navigate = useNavigate();
 
   const doSearch = () =>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Image,
@@ -10,26 +10,9 @@ import {
   MenuItem,
   MenuList,
   MenuButton,
-  Input,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverHeader,
-  PopoverBody,
-  FormControl,
-  FormLabel,
-  Select,
-  Text,
   useDisclosure,
 } from '@chakra-ui/core';
-import {
-  HamburgerIcon,
-  CloseIcon,
-  ChevronDownIcon,
-  SettingsIcon,
-} from '@chakra-ui/icons';
+import { HamburgerIcon, CloseIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import {
   useUser,
   useAuth,
@@ -45,82 +28,9 @@ import SignIn from './forms/users/SignIn';
 import SignUp from './forms/users/SignUp';
 import ResetPassword from './forms/users/ResetPassword';
 
+import { SearchBox } from '../routes/Search';
+
 import logo from '../assets/logo.svg';
-import { AppContext } from '../App';
-
-const Search = () => {
-  const {
-    search,
-    setSearch,
-    mode,
-    setMode,
-    tags,
-    setTags,
-    sort,
-    setSort,
-  } = useContext(AppContext);
-
-  return (
-    <Flex align="center">
-      <Input
-        type="text"
-        bg="white"
-        placeholder="Search for anything..."
-        mr={2}
-        width="320px"
-        defaultValue={search}
-        onChange={({ target }) => setSearch(target.value)}
-      />
-      <Popover>
-        <PopoverTrigger>
-          <Button variant="ghost">
-            <SettingsIcon mr={2} />
-            <Text>Filter & Sort</Text>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent>
-          <PopoverArrow />
-          <PopoverCloseButton />
-          <PopoverHeader>Filter & Sort</PopoverHeader>
-          <PopoverBody>
-            <FormControl id="mode" mb={2}>
-              <FormLabel>Mode</FormLabel>
-              <Select
-                bg="white"
-                onChange={({ target }) => setMode(target.value)}
-                defaultValue={mode}
-              >
-                <option value="datasets">Datasets</option>
-                <option value="models">Models</option>
-              </Select>
-            </FormControl>
-            <FormControl id="tags" mb={2}>
-              <FormLabel>Tags</FormLabel>
-              <Input
-                type="text"
-                bg="white"
-                placeholder="Search for specific tags..."
-                defaultValue={tags}
-                onChange={({ target }) => setTags(target.value)}
-              />
-            </FormControl>
-            <FormControl id="sort" mb={2}>
-              <FormLabel>Sort</FormLabel>
-              <Select
-                bg="white"
-                onChange={({ target }) => setSort(target.value)}
-                defaultValue={sort}
-              >
-                <option value="most-upvotes">Most Upvotes</option>
-                <option value="least-upvotes">Least Upvotes</option>
-              </Select>
-            </FormControl>
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
-    </Flex>
-  );
-};
 
 const UserAvatar = ({ user }) => {
   const db = useFirestore();
@@ -261,7 +171,7 @@ export default () => {
           alignItems="center"
           flexGrow={1}
         >
-          {window.location.pathname !== '/' && <Search />}
+          {window.location.pathname === '/search' && <SearchBox />}
           {user && (
             <Menu>
               <MenuButton

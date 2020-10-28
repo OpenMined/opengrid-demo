@@ -1,10 +1,4 @@
-import React, {
-  Suspense,
-  useEffect,
-  useState,
-  useLayoutEffect,
-  createContext,
-} from 'react';
+import React, { Suspense, useEffect, useState, useLayoutEffect } from 'react';
 import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { useAnalytics } from 'reactfire';
@@ -38,8 +32,6 @@ const Analytics = ({ location }) => {
 
 const history = createBrowserHistory();
 
-export const AppContext = createContext(null);
-
 const App = () => {
   const [action, setAction] = useState(history.action);
   const [location, setLocation] = useState(history.location);
@@ -51,32 +43,14 @@ const App = () => {
     });
   }, []);
 
-  const [search, setSearch] = useState('');
-  const [mode, setMode] = useState('datasets');
-  const [tags, setTags] = useState('');
-  const [sort, setSort] = useState('most-upvotes');
-
-  const context = {
-    search,
-    setSearch,
-    mode,
-    setMode,
-    tags,
-    setTags,
-    sort,
-    setSort,
-  };
-
   return (
-    <AppContext.Provider value={context}>
-      <Router action={action} location={location} navigator={history}>
-        <Suspense fallback={<Loading />}>
-          <Analytics location={location} />
-          <Header />
-          <Routes />
-        </Suspense>
-      </Router>
-    </AppContext.Provider>
+    <Router action={action} location={location} navigator={history}>
+      <Suspense fallback={<Loading />}>
+        <Analytics location={location} />
+        <Header />
+        <Routes />
+      </Suspense>
+    </Router>
   );
 };
 
