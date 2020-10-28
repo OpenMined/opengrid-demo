@@ -43,7 +43,7 @@ export default () => {
         backgroundSize: 'contain',
       }}
     >
-      <GridContainer pt={72}>
+      <GridContainer pt="72px">
         <Flex
           mt={[5, null, 8, 12, 16]}
           direction="column"

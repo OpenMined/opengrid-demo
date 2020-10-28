@@ -156,11 +156,22 @@ export default () => {
     <Page title="Search Results">
       <GridContainer isInitial>
         <Box>
+          {(!search || search === '') && (
+            <Heading
+              as="span"
+              size="md"
+              color="gray.700"
+              display="block"
+              mb={4}
+            >
+              Search for something by typing it above!
+            </Heading>
+          )}
           {results.length > 0 &&
             results.map((data, i) => (
               <Data {...data} mode={mode} key={i} mb={4} />
             ))}
-          {results.length === 0 && (
+          {search && results.length === 0 && (
             <Heading
               as="span"
               size="md"

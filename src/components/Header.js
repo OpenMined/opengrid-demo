@@ -195,6 +195,9 @@ export default () => {
           )}
           {user && <TextLink to="/datasets/me" title="My Datasets" />}
           {user && <TextLink to="/models/me" title="My Models" />}
+          {!['/', '/search'].includes(window.location.pathname) && (
+            <TextLink to="/search" title="Search" />
+          )}
         </Box>
         <Box
           display={{ base: show ? 'flex' : 'none', md: 'flex' }}
