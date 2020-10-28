@@ -12,8 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: npm install && npm run build
-      - name: Deploy website
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENGRID_DEMO }}'
@@ -21,15 +20,3 @@ jobs:
           projectId: opengrid-demo
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
-      - name: Deploy rules
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy --only firestore:rules
-        env:
-          GCP_SA_KEY: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENGRID_DEMO }}'
-      - name: Deploy functions
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy --only functions
-        env:
-          GCP_SA_KEY: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_OPENGRID_DEMO }}'
