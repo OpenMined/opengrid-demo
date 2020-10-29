@@ -64,14 +64,19 @@ export default () => {
             a "Duet" session with the data owner.
           </Text>
           <Box width={['100%', null, null, '60%']}>
-            <Flex align="center" mb={8}>
+            <Flex
+              align="center"
+              direction={{ base: 'column', md: 'row' }}
+              mb={8}
+            >
               <Input
                 type="text"
                 size="lg"
                 bg="white"
                 placeholder="Search for anything..."
-                flex="0 0 75%"
-                mr={4}
+                flex={{ md: '0 0 75%' }}
+                mr={{ base: 0, md: 4 }}
+                mb={{ base: 4, md: 0 }}
                 defaultValue={search}
                 onChange={({ target }) => setSearch(target.value)}
               />

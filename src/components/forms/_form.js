@@ -15,27 +15,44 @@ import {
   Text,
   InputGroup,
   InputRightElement,
+  InputLeftAddon,
+  InputRightAddon,
 } from '@chakra-ui/core';
 
 import { capitalize } from '../../helpers';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 
-const createInput = ({ options, ...input }, register, control) => {
+const SIZE = 'lg';
+const VARIANT = 'filled';
+
+const createInput = ({ options, left, right, ...input }, register, control) => {
+  let elem;
+
   if (input.type === 'select') {
-    return (
-      <Select {...input} variant="filled" size="lg" ref={register}>
+    elem = (
+      <Select {...input} variant={VARIANT} size={SIZE} ref={register}>
         {options.map((option) => (
           <option {...option} />
         ))}
       </Select>
     );
   } else if (input.type === 'textarea') {
-    return <Textarea {...input} variant="filled" size="lg" ref={register} />;
+    elem = <Textarea {...input} variant={VARIANT} size={SIZE} ref={register} />;
   } else if (input.type === 'array') {
-    return <FieldArray {...input} control={control} register={register} />;
+    elem = <FieldArray {...input} control={control} register={register} />;
   } else {
-    return <Input {...input} variant="filled" size="lg" ref={register} />;
+    elem = <Input {...input} variant={VARIANT} size={SIZE} ref={register} />;
   }
+
+  if (!left && !right) return elem;
+
+  return (
+    <InputGroup size={SIZE}>
+      {left && <InputLeftAddon bg="gray.300" children={left} />}
+      {elem}
+      {right && <InputRightAddon bg="gray.300" children={right} />}
+    </InputGroup>
+  );
 };
 
 const FieldArray = ({
@@ -67,7 +84,7 @@ const FieldArray = ({
             const inputName = `${name}[${index}].${input.name}`;
 
             return (
-              <InputGroup key={inputName} size="lg" mb={2}>
+              <InputGroup key={inputName} size={SIZE} mb={2}>
                 {createInput(
                   { ...input, name: inputName, defaultValue: item.value },
                   register,

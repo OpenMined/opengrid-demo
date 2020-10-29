@@ -42,11 +42,17 @@ export default ({
           ? `${description.slice(0, TRUNCATE)}...`
           : description}
       </Text>
-      <Flex justify="space-between" align="center">
+      <Flex
+        justify="space-between"
+        direction={{ base: 'column', md: 'row' }}
+        align={{ base: 'flex-start', md: 'center' }}
+      >
         <Flex>
           {typeof author !== 'string' && (
             <Flex align="center" mr={6}>
-              <Avatar src={author.photoURL} size="xs" mr={2} />
+              {author.photoURL && (
+                <Avatar src={author.photoURL} size="xs" mr={2} />
+              )}
               <Text fontWeight="bold">
                 {author.first_name} {author.last_name}
               </Text>

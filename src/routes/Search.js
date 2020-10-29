@@ -26,7 +26,7 @@ import Data from '../components/Data';
 import Page from '../components/Page';
 import GridContainer from '../components/GridContainer';
 
-export const SearchBox = () => {
+export const SearchBox = (props) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [search, setSearch] = useState(searchParams.get('search') || '');
@@ -40,7 +40,7 @@ export const SearchBox = () => {
   }, [search, mode, tags, navigate]);
 
   return (
-    <Flex align="center">
+    <Flex align="center" {...props}>
       <Input
         type="text"
         bg="white"

@@ -10,6 +10,7 @@ import {
 } from 'reactfire';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { openPopupWidget } from 'react-calendly';
 import * as firebase from 'firebase/app';
 
 import Page from '../../components/Page';
@@ -59,9 +60,13 @@ export default () => {
   return (
     <Page title={name}>
       <GridContainer isInitial>
-        <Flex>
-          <Box width={{ lg: 3 / 4 }} mr={8}>
-            <Flex mb={4} align="center">
+        <Flex direction={{ base: 'column', lg: 'row' }}>
+          <Box width={{ base: '100%', lg: 3 / 4 }} mr={8}>
+            <Flex
+              mb={4}
+              align={{ base: 'flex-start', md: 'center' }}
+              direction={{ base: 'column', md: 'row' }}
+            >
               <Heading as="h2" size="xl">
                 {name}
               </Heading>
@@ -69,7 +74,8 @@ export default () => {
                 <Button
                   as={Link}
                   to={`/${PAGE_MODE}/${uid}/edit`}
-                  ml={8}
+                  mt={{ base: 4, md: 0 }}
+                  ml={{ base: 0, md: 8 }}
                   colorScheme="blue"
                 >
                   {PAGE_MODE === 'datasets' ? 'Edit Dataset' : 'Edit Model'}
@@ -86,26 +92,28 @@ export default () => {
                 </Button>
               )}
             </Flex>
-            <Flex>
-              <Flex align="center" mr={6}>
-                <Avatar src={authorData.photoURL} size="xs" mr={2} />
+            <Flex direction={{ base: 'column', md: 'row' }}>
+              <Flex align="center" mt={{ base: 2, md: 0 }} mr={6}>
+                {authorData.photoURL && (
+                  <Avatar src={authorData.photoURL} size="xs" mr={2} />
+                )}
                 <Text fontWeight="bold">
                   {author.first_name} {author.last_name}
                 </Text>
               </Flex>
-              <Flex align="center" mr={6}>
+              <Flex align="center" mt={{ base: 2, md: 0 }} mr={6}>
                 <TimeIcon mr={2} color="gray.500" />
                 <Text color="gray.700">
                   Created {dayjs.unix(created_at.seconds).fromNow()}
                 </Text>
               </Flex>
-              <Flex align="center" mr={6}>
+              <Flex align="center" mt={{ base: 2, md: 0 }} mr={6}>
                 <TimeIcon mr={2} color="gray.500" />
                 <Text color="gray.700">
                   Updated {dayjs.unix(updated_at.seconds).fromNow()}
                 </Text>
               </Flex>
-              <Flex align="center">
+              <Flex align="center" mt={{ base: 2, md: 0 }}>
                 <Text color="yellow.500" mr={2}>
                   ★
                 </Text>
@@ -114,10 +122,10 @@ export default () => {
                 </Text>
               </Flex>
             </Flex>
-            <Flex mt={4}>
+            <Flex wrap="wrap">
               {tags.map((t, i) => (
                 <Link to={`/search?search=${t}&mode=${PAGE_MODE}`} key={t}>
-                  <Tag colorScheme="blue" mr={i + 1 < tags.length ? 2 : 0}>
+                  <Tag mr={i + 1 < tags.length ? 2 : 0} mt={4}>
                     #{t}
                   </Tag>
                 </Link>
@@ -125,15 +133,29 @@ export default () => {
             </Flex>
             <Box mt={8} dangerouslySetInnerHTML={{ __html: description }} />
           </Box>
-          <Box width={{ lg: 1 / 4 }}>
+          <Box width={{ base: '100%', lg: 1 / 4 }} mt={{ base: 6, lg: 0 }}>
+            {authorData.calendly_link && (
+              <Button
+                size="lg"
+                width="100%"
+                colorScheme="blue"
+                onClick={() =>
+                  openPopupWidget({
+                    url: `https://calendly.com/${authorData.calendly_link}`,
+                  })
+                }
+              >
+                Schedule Duet Demo
+              </Button>
+            )}
             {authorData.contact_email && (
               <Button
                 as="a"
-                size="lg"
                 width="100%"
+                mt={4}
                 href={`mailto:${authorData.contact_email}`}
               >
-                Email {PAGE_MODE === 'datasets' ? 'Dataset' : 'Model'} Owner
+                Contact {PAGE_MODE === 'datasets' ? 'Dataset' : 'Model'} Owner
               </Button>
             )}
           </Box>

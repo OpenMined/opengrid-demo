@@ -45,9 +45,9 @@ export default () => {
           </Heading>
           <UpdateUser />
           <Text size="sm" color="gray.700" mt={2}>
-            <strong>Note:</strong> Changing the email address above is only for
-            the email you would like to be contacted at, not the email address
-            you use to sign in.
+            <strong>Note:</strong> Changing the email address above will only
+            change the email that users have to contact you. It does not change
+            the email you use to sign in to OpenGrid.
           </Text>
         </Box>
         <Box width={{ lg: '50%' }}>

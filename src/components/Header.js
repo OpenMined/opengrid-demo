@@ -82,18 +82,19 @@ export default () => {
     onOpen();
   };
 
-  const TextLink = ({ to, title }) => (
+  const TextLink = ({ to, title, ...props }) => (
     <Link
       to={to}
       as={RRDLink}
       mt={{ base: 4, md: 0 }}
-      mr={6}
+      mr={{ base: 0, md: 6 }}
       fontFamily="heading"
       textTransform="uppercase"
       fontWeight="medium"
       letterSpacing={1}
       color="gray.800"
       sx={{ '&:hover': { textDecoration: 'none', color: 'blue.500' } }}
+      {...props}
     >
       {title}
     </Link>
@@ -166,19 +167,37 @@ export default () => {
           {show ? <CloseIcon /> : <HamburgerIcon />}
         </Box>
         <Box
-          display={{ base: show ? 'block' : 'none', md: 'flex' }}
+          display={{ base: show ? 'flex' : 'none', md: 'flex' }}
           width={{ base: 'full', md: 'auto' }}
+          flexDirection={{ base: 'column', md: 'row' }}
           alignItems="center"
           flexGrow={1}
         >
-          {window.location.pathname === '/search' && <SearchBox />}
+          {window.location.pathname === '/search' && (
+            <SearchBox mt={{ base: 6, md: 0 }} mr={{ base: 0, md: 6 }} />
+          )}
           {user && (
+            <TextLink
+              to="/datasets/new"
+              display={{ base: 'block', md: 'none' }}
+              title="Create Dataset"
+            />
+          )}
+          {user && (
+            <TextLink
+              to="/models/new"
+              display={{ base: 'block', md: 'none' }}
+              title="Create Model"
+            />
+          )}
+          {user && window.location.pathname !== '/search' && (
             <Menu>
               <MenuButton
                 as={Button}
                 colorScheme="blue"
+                display={{ base: 'none', md: 'block' }}
                 mt={{ base: 4, md: 0 }}
-                mr={6}
+                mr={{ base: 0, md: 6 }}
                 rightIcon={<ChevronDownIcon />}
               >
                 Create New
@@ -193,8 +212,12 @@ export default () => {
               </MenuList>
             </Menu>
           )}
-          {user && <TextLink to="/datasets/me" title="My Datasets" />}
-          {user && <TextLink to="/models/me" title="My Models" />}
+          {user && window.location.pathname !== '/search' && (
+            <TextLink to="/datasets/me" title="My Datasets" />
+          )}
+          {user && window.location.pathname !== '/search' && (
+            <TextLink to="/models/me" title="My Models" />
+          )}
           {!['/', '/search'].includes(window.location.pathname) && (
             <TextLink to="/search" title="Search" />
           )}
@@ -202,6 +225,8 @@ export default () => {
         <Box
           display={{ base: show ? 'flex' : 'none', md: 'flex' }}
           alignItems="center"
+          justifyContent="center"
+          flexGrow={{ base: 1, md: 0 }}
           mt={{ base: 4, md: 0 }}
         >
           {user && <SignOutButton />}

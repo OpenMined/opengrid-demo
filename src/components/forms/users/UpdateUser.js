@@ -58,6 +58,14 @@ export default () => {
       },
     ],
     {
+      name: 'calendly_link',
+      type: 'text',
+      label: 'Calendly Link',
+      placeholder: 'your_scheduling_page',
+      left: 'https://calendly.com/',
+      defaultValue: userData.calendly_link || '',
+    },
+    {
       name: 'contact_email',
       type: 'text',
       label: 'Preferred contact',
