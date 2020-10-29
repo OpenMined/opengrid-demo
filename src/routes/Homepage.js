@@ -7,6 +7,7 @@ import {
   Input,
   Select,
   Button,
+  Link,
 } from '@chakra-ui/core';
 import { useNavigate } from 'react-router-dom';
 
@@ -61,7 +62,16 @@ export default () => {
           >
             Welcome to the world's first registry exclusively built for private
             datasets and models. Search for anything you would like and schedule
-            a "Duet" session with the data owner.
+            a{' '}
+            <Link
+              as="a"
+              color="blue.500"
+              href="https://www.youtube.com/watch?v=DppXfA6C8L8"
+              target="_blank"
+            >
+              "Duet session"
+            </Link>{' '}
+            with the data owner.
           </Text>
           <Box width={['100%', null, null, '60%']}>
             <Flex
