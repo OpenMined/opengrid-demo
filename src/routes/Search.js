@@ -124,30 +124,32 @@ export default () => {
       if (arrayTags.length > 0) options.tagFilters = [arrayTags];
 
       index.search(debouncedSearch, options).then(({ hits }) => {
-        hits = hits.map((h) => {
-          const uid = h.objectID;
-          const created_at = {
-            seconds: h.created_at._seconds,
-            nanoseconds: h.created_at._nanoseconds,
-          };
-          const updated_at = {
-            seconds: h.created_at._seconds,
-            nanoseconds: h.created_at._nanoseconds,
-          };
+        setResults(
+          hits.map((h) => {
+            const obj = Object.assign({}, h);
 
-          delete h.objectID;
-          delete h._highlightResult;
-          delete h._tags;
+            const uid = obj.objectID;
+            const created_at = {
+              seconds: obj.created_at._seconds,
+              nanoseconds: obj.created_at._nanoseconds,
+            };
+            const updated_at = {
+              seconds: obj.created_at._seconds,
+              nanoseconds: obj.created_at._nanoseconds,
+            };
 
-          return {
-            ...h,
-            uid,
-            created_at,
-            updated_at,
-          };
-        });
+            delete obj.objectID;
+            delete obj._highlightResult;
+            delete obj._tags;
 
-        setResults(hits);
+            return {
+              ...obj,
+              uid,
+              created_at,
+              updated_at,
+            };
+          })
+        );
       });
     }
   }, [debouncedSearch, mode, debouncedTags]);

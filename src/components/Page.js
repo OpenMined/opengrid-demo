@@ -5,8 +5,8 @@ const DEFAULT_TITLE = 'OpenGrid';
 const DEFAULT_DESCRIPTION =
   'OpenGrid is a registry of private datasets available for training and inference. Schedule a Duet with the data owner today!';
 const BASE_URL =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3000'
+  window.location.hostname === 'localhost'
+    ? window.location.origin
     : 'https://opengrid.openmined.org';
 
 export default ({
