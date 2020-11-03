@@ -7,7 +7,7 @@ const DEFAULT_DESCRIPTION =
 const BASE_URL =
   window.location.hostname === 'localhost'
     ? window.location.origin
-    : 'https://opengrid.openmined.org';
+    : 'https://opengrid-beta.openmined.org';
 
 export default ({
   children,
