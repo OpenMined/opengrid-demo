@@ -72,7 +72,7 @@ export default () => {
               "Duet session"
             </Link>{' '}
             with the data owner.{' '}
-            <strong>Please note that this software is in beta.</strong>
+            <strong>Please note that this software is in alpha.</strong>
           </Text>
           <Box width={['100%', null, null, '60%']}>
             <Flex
