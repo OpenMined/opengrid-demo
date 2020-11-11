@@ -1,15 +1,16 @@
-import React, { lazy } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
-import { useUser } from 'reactfire';
+import React, { lazy } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { useUser } from "reactfire";
+import Browse from "./Browse";
 
-const Homepage = lazy(() => import('./Homepage'));
-const EditUser = lazy(() => import('./users/EditUser'));
-const Search = lazy(() => import('./Search'));
-const NewData = lazy(() => import('./data/NewData'));
-const MyData = lazy(() => import('./data/MyData'));
-const Data = lazy(() => import('./data/Data'));
-const EditData = lazy(() => import('./data/EditData'));
-const NoMatch = lazy(() => import('./NoMatch'));
+const Homepage = lazy(() => import("./Homepage"));
+const EditUser = lazy(() => import("./users/EditUser"));
+const Search = lazy(() => import("./Search"));
+const NewData = lazy(() => import("./data/NewData"));
+const MyData = lazy(() => import("./data/MyData"));
+const Data = lazy(() => import("./data/Data"));
+const EditData = lazy(() => import("./data/EditData"));
+const NoMatch = lazy(() => import("./NoMatch"));
 
 const AuthRoute = (props) => {
   const user = useUser();
@@ -22,6 +23,7 @@ export default () => (
     <Route path="/" element={<Homepage />} />
     <AuthRoute path="edit-user" element={<EditUser />} />
     <Route path="search" element={<Search />} />
+    <Route path="browse" element={<Browse />} />
     <Route path="datasets">
       <AuthRoute path="new" element={<NewData />} />
       <AuthRoute path="me" element={<MyData />} />
