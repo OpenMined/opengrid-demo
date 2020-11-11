@@ -23,10 +23,11 @@ export default ({
   uid,
   ...props
 }) => {
+
   const PAGE_MODE =
-    mode || window.location.pathname.includes('datasets')
-      ? 'datasets'
-      : 'models';
+      mode || (window.location.pathname.includes('datasets')
+        ? 'datasets'
+        : 'models');
 
   description = filterDescription(description);
 
