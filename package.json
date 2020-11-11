@@ -30,6 +30,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test-firestore": "npx mocha firebase/test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -46,5 +47,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^1.1.0",
+    "firebase-admin": "^9.3.0",
+    "firebase-tools": "^8.15.1",
+    "mocha": "^8.2.1"
   }
 }
