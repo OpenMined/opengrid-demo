@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { Box, Heading } from "@chakra-ui/core";
-import { useFirestore } from "reactfire";
+import React, { useEffect, useState } from 'react';
+import { Box, Heading } from '@chakra-ui/core';
+import { useFirestore } from 'reactfire';
 
-import Data from "../components/Data";
-import Page from "../components/Page";
-import GridContainer from "../components/GridContainer";
+import Data from '../components/Data';
+import Page from '../components/Page';
+import GridContainer from '../components/GridContainer';
 
 export default () => {
-  const [mode, ] = useState("datasets");
+  const [mode] = useState('datasets');
   const [results, setResults] = useState([]);
   const [itemsPerPage] = useState(20);
 
   const db = useFirestore();
 
-  useEffect(() => { 
-    db.collection("datasets")
-      .orderBy("upvotes", "desc")
+  useEffect(() => {
+    db.collection('datasets')
+      .orderBy('upvotes', 'desc')
       .limit(itemsPerPage)
       .get()
       .then((collection) => {

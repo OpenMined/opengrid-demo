@@ -1,16 +1,16 @@
-import React, { lazy } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
-import { useUser } from "reactfire";
-import Browse from "./Browse";
+import React, { lazy } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { useUser } from 'reactfire';
 
-const Homepage = lazy(() => import("./Homepage"));
-const EditUser = lazy(() => import("./users/EditUser"));
-const Search = lazy(() => import("./Search"));
-const NewData = lazy(() => import("./data/NewData"));
-const MyData = lazy(() => import("./data/MyData"));
-const Data = lazy(() => import("./data/Data"));
-const EditData = lazy(() => import("./data/EditData"));
-const NoMatch = lazy(() => import("./NoMatch"));
+const Homepage = lazy(() => import('./Homepage'));
+const EditUser = lazy(() => import('./users/EditUser'));
+const Search = lazy(() => import('./Search'));
+const Browse = lazy(() => import('./Browse'));
+const NewData = lazy(() => import('./data/NewData'));
+const MyData = lazy(() => import('./data/MyData'));
+const Data = lazy(() => import('./data/Data'));
+const EditData = lazy(() => import('./data/EditData'));
+const NoMatch = lazy(() => import('./NoMatch'));
 
 const AuthRoute = (props) => {
   const user = useUser();
