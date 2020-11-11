@@ -6,6 +6,7 @@ import { useAnalytics } from 'reactfire';
 import Routes from './routes';
 
 import Header from './components/Header';
+import Footer from './components/Footer';
 import Loading from './components/Loading';
 
 const Analytics = ({ location }) => {
@@ -37,6 +38,7 @@ const App = () => {
         <Analytics location={location} />
         <Header />
         <Routes />
+        {location.pathname !== '/' && <Footer />}
       </Suspense>
     </Router>
   );

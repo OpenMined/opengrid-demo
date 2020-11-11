@@ -1,38 +1,48 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Heading } from '@chakra-ui/core';
-import { useFirestore } from 'reactfire';
+import React, { useState } from 'react';
+import { Box, Button, Flex, Heading } from '@chakra-ui/core';
+import { useFirestore, useFirestoreCollectionData } from 'reactfire';
 
 import Data from '../components/Data';
 import Page from '../components/Page';
 import GridContainer from '../components/GridContainer';
 
 export default () => {
-  const [mode] = useState('datasets');
-  const [results, setResults] = useState([]);
-  const [itemsPerPage] = useState(20);
-
+  const itemsPerPage = 20;
   const db = useFirestore();
 
-  useEffect(() => {
-    db.collection('datasets')
-      .orderBy('upvotes', 'desc')
-      .limit(itemsPerPage)
-      .get()
-      .then((collection) => {
-        const items = collection.docs.map((item) => item.data());
-        setResults(items);
-      });
-  }, [itemsPerPage, db]);
+  const [mode, setMode] = useState('datasets');
+
+  const dataRef = db
+    .collection(mode)
+    .orderBy('upvotes', 'desc')
+    .limit(itemsPerPage);
+  const data = useFirestoreCollectionData(dataRef, { idField: 'uid' });
 
   return (
     <Page title="Browse">
       <GridContainer isInitial>
+        <Flex
+          direction={{ base: 'column', md: 'row' }}
+          justify="space-between"
+          align={{ md: 'center' }}
+          mb={5}
+        >
+          <Heading as="h2" size="xl">
+            Browse Top-Rated {mode === 'datasets' ? 'Datasets' : 'Models'}
+          </Heading>
+          <Button
+            mt={{ base: 4, md: 0 }}
+            onClick={() => setMode(mode === 'datasets' ? 'models' : 'datasets')}
+          >
+            Switch to {mode === 'datasets' ? 'Models' : 'Datasets'}
+          </Button>
+        </Flex>
         <Box>
-          {results.length > 0 &&
-            results.map((data, i) => (
+          {data.length > 0 &&
+            data.map((data, i) => (
               <Data {...data} mode={mode} key={i} mb={4} />
             ))}
-          {results.length === 0 && (
+          {data.length === 0 && (
             <Heading
               as="span"
               size="md"

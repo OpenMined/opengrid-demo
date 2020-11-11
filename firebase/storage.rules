@@ -1,0 +1,19 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isLoggedIn() {
+      return request.auth != null;
+    }
+
+    match /{userId}/photos/{fileName} {
+      allow read;
+      allow write: if isLoggedIn() && request.auth.uid == userId
+                   && request.resource.contentType.matches('image/.+');
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

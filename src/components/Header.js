@@ -89,9 +89,7 @@ export default () => {
       mt={{ base: 4, md: 0 }}
       mr={{ base: 0, md: 6 }}
       fontFamily="heading"
-      textTransform="uppercase"
       fontWeight="medium"
-      letterSpacing={1}
       color="gray.800"
       sx={{ '&:hover': { textDecoration: 'none', color: 'blue.500' } }}
       {...props}
@@ -173,6 +171,9 @@ export default () => {
           alignItems="center"
           flexGrow={1}
         >
+          {window.location.pathname !== '/search' && !user && (
+            <TextLink to="/browse" title="Browse" />
+          )}
           {window.location.pathname === '/search' && (
             <SearchBox mt={{ base: 6, md: 0 }} mr={{ base: 0, md: 6 }} />
           )}
@@ -220,6 +221,9 @@ export default () => {
           )}
           {!['/', '/search'].includes(window.location.pathname) && (
             <TextLink to="/search" title="Search" />
+          )}
+          {window.location.pathname !== '/search' && user && (
+            <TextLink to="/browse" title="Browse" />
           )}
         </Box>
         <Box
