@@ -60,20 +60,20 @@ after(async () => {
 describe("Opengrid firestore rules", () => {
 
     /**
-      ? People cannot upvote more than once
-      ? A dataset or model owner cannot upvote their own dataset or model, nor can they change the upvote field at all
-      ? A person can only append their UID to the upvotes field, but they cannot set the value of the field to whatever they want (like setting it an empty array or setting it to an array with 1,000,000 rows)
+     [v] People cannot upvote more than once
+     [v] A dataset or model owner cannot upvote their own dataset or model, nor can they change the upvote field at all
+     [v] A person can only append their UID to the upvotes field, but they cannot set the value of the field to whatever they want (like setting it an empty array or setting it to an array with 1,000,000 rows)
      [v] People cannot update a dataset or model that they are not the author of
      [v] People cannot delete a dataset or a model that they are not the author of
      [v] People cannot edit another user
      [v] You can only create a dataset or model if you're logged in
-      - People cannot store any data anywhere else in the main bucket, they can only upload a profile picture for themselves
+     [ ] People cannot store any data anywhere else in the main bucket, they can only upload a profile picture for themselves
 
      additional:
      - [v] user can create dataset, model, or user only with theirs uid
      - [v] owner of dataset/model cannot update it to make it other user's dataset/model
      - [v] owner cannot tamper with dataset or model created or updated date (during create or update)
-
+     - [ ] image size is limited
      **/
 
     ['datasets', 'models'].forEach(collection => {
@@ -81,7 +81,10 @@ describe("Opengrid firestore rules", () => {
             const db = getAuthedFirestore(null);
             await firebase.assertFails(db.collection(collection).doc("test").set({
                 name: "test name",
-                description: "test desc"
+                description: "test desc",
+                upvotes: [],
+                created_at: firebase.firestore.FieldValue.serverTimestamp(),
+                updated_at: firebase.firestore.FieldValue.serverTimestamp(),
             }));
         });
 
@@ -91,6 +94,7 @@ describe("Opengrid firestore rules", () => {
             await firebase.assertSucceeds(alice.collection(collection).doc("alicecol").set({
                 name: "Alice's stuff",
                 author: "alice",
+                upvotes: [],
                 created_at: firebase.firestore.FieldValue.serverTimestamp(),
                 updated_at: firebase.firestore.FieldValue.serverTimestamp(),
             }));
@@ -106,12 +110,14 @@ describe("Opengrid firestore rules", () => {
             await firebase.assertSucceeds(alice.collection(collection).doc("alicecol").set({
                 name: "Alice's stuff",
                 author: "alice",
+                upvotes: [],
                 created_at: firebase.firestore.FieldValue.serverTimestamp(),
                 updated_at: firebase.firestore.FieldValue.serverTimestamp(),
             }));
             await firebase.assertFails(alice.collection(collection).doc("bobcol").set({
                 name: "Bob's stuff",
                 author: "bob",
+                upvotes: [],
                 created_at: firebase.firestore.FieldValue.serverTimestamp(),
                 updated_at: firebase.firestore.FieldValue.serverTimestamp(),
             }));
@@ -122,6 +128,7 @@ describe("Opengrid firestore rules", () => {
             await firebase.assertSucceeds(alice.collection(collection).doc("alicecol").set({
                 name: "Alice's stuff",
                 author: "alice",
+                upvotes: [],
                 created_at: firebase.firestore.FieldValue.serverTimestamp(),
                 updated_at: firebase.firestore.FieldValue.serverTimestamp(),
             }));
@@ -143,18 +150,21 @@ describe("Opengrid firestore rules", () => {
             await firebase.assertFails(alice.collection(collection).doc("alicecol").set({
                 name: "Alice's stuff",
                 author: "alice",
+                upvotes: [],
                 created_at: firebase.firestore.Timestamp.fromDate(new Date('2020-01-01')),
                 updated_at: firebase.firestore.FieldValue.serverTimestamp(),
             }));
             await firebase.assertFails(alice.collection(collection).doc("alicecol").set({
                 name: "Alice's stuff",
                 author: "alice",
+                upvotes: [],
                 created_at: firebase.firestore.FieldValue.serverTimestamp(),
                 updated_at: firebase.firestore.Timestamp.fromDate(new Date('2020-01-01')),
             }));
             await firebase.assertSucceeds(alice.collection(collection).doc("alicecol").set({
                 name: "Alice's stuff",
                 author: "alice",
+                upvotes: [],
                 created_at: firebase.firestore.FieldValue.serverTimestamp(),
                 updated_at: firebase.firestore.FieldValue.serverTimestamp(),
             }));
@@ -165,6 +175,7 @@ describe("Opengrid firestore rules", () => {
             await firebase.assertSucceeds(alice.collection(collection).doc("alicecol").set({
                 name: "Alice's stuff",
                 author: "alice",
+                upvotes: [],
                 created_at: firebase.firestore.FieldValue.serverTimestamp(),
                 updated_at: firebase.firestore.FieldValue.serverTimestamp(),
             }));
@@ -221,6 +232,7 @@ describe("Opengrid firestore rules", () => {
             const alice = getAuthedFirestore({uid: 'alice'});
             const bob = getAuthedFirestore({uid: 'bob'});
             const john = getAuthedFirestore({uid: 'john'});
+            const karl = getAuthedFirestore({uid: 'karl'});
 
             await firebase.assertSucceeds(alice.collection(collection).doc("alicecol").set({
                 name: "Alice's stuff",
@@ -230,23 +242,33 @@ describe("Opengrid firestore rules", () => {
                 updated_at: firebase.firestore.FieldValue.serverTimestamp(),
             }));
 
-            // vote for theirselves
+            // vote for themselves
             await firebase.assertSucceeds(bob.collection(collection).doc("alicecol").update({
                 upvotes: firebase.firestore.FieldValue.arrayUnion("bob"),
             }));
 
-            // vote for others
-            await firebase.assertFails(bob.collection(collection).doc("alicecol").update({
+            // vote for themselves
+            await firebase.assertSucceeds(john.collection(collection).doc("alicecol").update({
                 upvotes: firebase.firestore.FieldValue.arrayUnion("john"),
             }));
 
             // vote for others
-            await firebase.assertFails(john.collection(collection).doc("alicecol").update({
+            await firebase.assertFails(bob.collection(collection).doc("alicecol").update({
+                upvotes: firebase.firestore.FieldValue.arrayUnion("karl"),
+            }));
+
+            // unvote for others
+            await firebase.assertFails(karl.collection(collection).doc("alicecol").update({
                 upvotes: firebase.firestore.FieldValue.arrayRemove("bob"),
             }));
 
+            // unvote for themselves
+            await firebase.assertSucceeds(john.collection(collection).doc("alicecol").update({
+                upvotes: firebase.firestore.FieldValue.arrayRemove("john"),
+            }));
+
             // just try to remove everything
-            await firebase.assertFails(john.collection(collection).doc("alicecol").update({
+            await firebase.assertFails(karl.collection(collection).doc("alicecol").update({
                 upvotes: [],
             }));
         });
@@ -263,7 +285,7 @@ describe("Opengrid firestore rules", () => {
                 updated_at: firebase.firestore.FieldValue.serverTimestamp(),
             }));
 
-            // vote for theirselves
+            // vote for themselves
             await firebase.assertSucceeds(bob.collection(collection).doc("alicecol").update({
                 upvotes: firebase.firestore.FieldValue.arrayUnion("bob"),
             }));

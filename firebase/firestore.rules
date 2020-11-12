@@ -7,11 +7,11 @@ service cloud.firestore {
     }
 
     function onlyAddsOneElement(listField, value) {
-      return request.resource.data[listField].hasOnly(resource.data[listField].concat([value]))
+      return request.resource.data[listField] == resource.data[listField].concat([value])
     }
 
     function onlyRemovesOneElement(listField, value) {
-      return request.resource.data[listField].hasOnly(resource.data[listField].removeAll([value]))
+      return request.resource.data[listField] == resource.data[listField].removeAll([value])
     }
 
     function isLoggedIn() {
@@ -25,16 +25,27 @@ service cloud.firestore {
 
       allow read;
       allow update: if isDatasetOwner()
+                        // disallow modifying author
                         && (!("author" in request.resource.data) || request.resource.data.author == request.auth.uid)
-                        && request.resource.data.updated_at == request.time
+                        // disallow modifying upvotes (by owner)
+                        && (!("upvotes" in request.resource.data) || request.resource.data.upvotes == resource.data.upvotes)
+                        // disallow modifying created_at
                         && (!("created_at" in request.resource.data) || request.resource.data.created_at == resource.data.created_at)
+                        // update time can be only current
+                        && (!("updated_at" in request.resource.data) || request.resource.data.updated_at == request.time)
                         || (isLoggedIn() && !isDatasetOwner() && incomingDataHasOnly('upvotes') && (
-                            onlyAddsOneElement('upvotes', request.auth.uid)
+                            // allow to add only own uid if it's not already there
+                            (onlyAddsOneElement('upvotes', request.auth.uid) && !resource.data.upvotes.hasAny([request.auth.uid]))
+                            // allow to delete only own uid
                             || onlyRemovesOneElement('upvotes', request.auth.uid)
                         ));
       allow delete: if isDatasetOwner();
       allow create: if isLoggedIn()
+                        // disallow setting non-empty upvotes
+                        && ("upvotes" in request.resource.data && request.resource.data.upvotes == [])
+                        // author must match to user's uid
                         && request.resource.data.author == request.auth.uid
+                        // create & update time must be current
                         && request.resource.data.created_at == request.time
                         && request.resource.data.updated_at == request.time;
     }
@@ -46,16 +57,27 @@ service cloud.firestore {
 
       allow read;
       allow update: if isModelOwner()
+                        // disallow modifying author
                         && (!("author" in request.resource.data) || request.resource.data.author == request.auth.uid)
-                        && request.resource.data.updated_at == request.time
+                        // disallow modifying upvotes (by owner)
+                        && (!("upvotes" in request.resource.data) || request.resource.data.upvotes == resource.data.upvotes)
+                        // disallow modifying created_at
                         && (!("created_at" in request.resource.data) || request.resource.data.created_at == resource.data.created_at)
+                        // update time can be only current
+                        && (!("updated_at" in request.resource.data) || request.resource.data.updated_at == request.time)
                         || (isLoggedIn() && !isModelOwner() && incomingDataHasOnly('upvotes') && (
-                           onlyAddsOneElement('upvotes', request.auth.uid)
-                           || onlyRemovesOneElement('upvotes', request.auth.uid)
+                            // allow to add only own uid if it's not already there
+                            (onlyAddsOneElement('upvotes', request.auth.uid) && !resource.data.upvotes.hasAny([request.auth.uid]))
+                            // allow to delete only own uid
+                            || onlyRemovesOneElement('upvotes', request.auth.uid)
                         ));
       allow delete: if isModelOwner();
       allow create: if isLoggedIn()
+                        // disallow setting non-empty upvotes
+                        && ("upvotes" in request.resource.data && request.resource.data.upvotes == [])
+                        // author must match to user's uid
                         && request.resource.data.author == request.auth.uid
+                        // create & update time must be current
                         && request.resource.data.created_at == request.time
                         && request.resource.data.updated_at == request.time;
     }
