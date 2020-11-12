@@ -6,6 +6,14 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly([field])
     }
 
+    function onlyAddsOneElement(listField, value) {
+      return request.resource.data[listField].hasOnly(resource.data[listField].concat([value]))
+    }
+
+    function onlyRemovesOneElement(listField, value) {
+      return request.resource.data[listField].hasOnly(resource.data[listField].removeAll([value]))
+    }
+
     function isLoggedIn() {
       return request.auth != null;
     }
@@ -16,9 +24,19 @@ service cloud.firestore {
       }
 
       allow read;
-      allow update: if isDatasetOwner() || (!isDatasetOwner() && incomingDataHasOnly('upvotes'));
+      allow update: if isDatasetOwner()
+                        && (!("author" in request.resource.data) || request.resource.data.author == request.auth.uid)
+                        && request.resource.data.updated_at == request.time
+                        && (!("created_at" in request.resource.data) || request.resource.data.created_at == resource.data.created_at)
+                        || (isLoggedIn() && !isDatasetOwner() && incomingDataHasOnly('upvotes') && (
+                            onlyAddsOneElement('upvotes', request.auth.uid)
+                            || onlyRemovesOneElement('upvotes', request.auth.uid)
+                        ));
       allow delete: if isDatasetOwner();
-      allow create: if isLoggedIn(); 
+      allow create: if isLoggedIn()
+                        && request.resource.data.author == request.auth.uid
+                        && request.resource.data.created_at == request.time
+                        && request.resource.data.updated_at == request.time;
     }
 
     match /models/{model} {
@@ -27,9 +45,19 @@ service cloud.firestore {
       }
 
       allow read;
-      allow update: if isModelOwner() || (!isModelOwner() && incomingDataHasOnly('upvotes'));
+      allow update: if isModelOwner()
+                        && (!("author" in request.resource.data) || request.resource.data.author == request.auth.uid)
+                        && request.resource.data.updated_at == request.time
+                        && (!("created_at" in request.resource.data) || request.resource.data.created_at == resource.data.created_at)
+                        || (isLoggedIn() && !isModelOwner() && incomingDataHasOnly('upvotes') && (
+                           onlyAddsOneElement('upvotes', request.auth.uid)
+                           || onlyRemovesOneElement('upvotes', request.auth.uid)
+                        ));
       allow delete: if isModelOwner();
-      allow create: if isLoggedIn(); 
+      allow create: if isLoggedIn()
+                        && request.resource.data.author == request.auth.uid
+                        && request.resource.data.created_at == request.time
+                        && request.resource.data.updated_at == request.time;
     }
 
     match /users/{user} {

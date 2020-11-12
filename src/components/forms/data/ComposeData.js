@@ -57,7 +57,7 @@ export default ({ data, uid, callback }) => {
     if (mode === 'create') {
       d.author = user.uid;
       d.upvotes = [];
-      d.created_at = firebase.firestore.Timestamp.now();
+      d.created_at = firebase.firestore.FieldValue.serverTimestamp();
       d.updated_at = d.created_at;
 
       return db
@@ -83,7 +83,7 @@ export default ({ data, uid, callback }) => {
           })
         );
     } else if (mode === 'edit') {
-      d.updated_at = firebase.firestore.Timestamp.now();
+      d.updated_at = firebase.firestore.FieldValue.serverTimestamp();
 
       return db
         .collection(PAGE_MODE)
