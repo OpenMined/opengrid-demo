@@ -30,7 +30,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "test-firestore": "npx mocha firebase/test",
+    "test-firestore": "firebase emulators:exec --only firestore \"mocha firebase/test\"",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

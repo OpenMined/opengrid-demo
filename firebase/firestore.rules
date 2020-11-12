@@ -18,68 +18,76 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    match /datasets/{dataset} {
-      function isDatasetOwner() {
-        return isLoggedIn() && request.auth.uid == resource.data.author
-      }
+    function isDatasetOrModelOwner() {
+      return isLoggedIn() && request.auth.uid == resource.data.author
+    }
 
+    function canUpdateDatasetOrModel(reqData, currData, uid) {
+      // IF they own the dataset or model
+      return (
+        (
+          isDatasetOrModelOwner()
+
+          // ... and they're not modifying the author
+          && (!("author" in reqData) || reqData.author == uid)
+
+          // ... and they're not modifying the upvotes
+          && (!("upvotes" in reqData) || reqData.upvotes == currData.upvotes)
+
+          // ... and they're not modifying created_at
+          && (!("created_at" in reqData) || reqData.created_at == currData.created_at)
+
+          // ... and updated_at reflects the current server time
+          && (!("updated_at" in reqData) || reqData.updated_at == request.time)
+        )
+
+        // OR they are not the owner
+        || (
+          !isDatasetOrModelOwner()
+
+          // ... and the changed data only includes upvotes
+          && incomingDataHasOnly('upvotes')
+
+          // ... and they're only adding their uid to the upvotes and the current data doesn't already contain their uid
+          && (
+            (onlyAddsOneElement('upvotes', uid) && !currData.upvotes.hasAny([uid]))
+
+            // ... or they're removing their uid from the upvotes
+            || onlyRemovesOneElement('upvotes', uid)
+          )
+        )
+      );
+    }
+
+    function canCreateDatasetOrModel(reqData, uid) {
+      // IF they are logged in
+      return (
+        isLoggedIn()
+
+        // ... and the upvotes field is empty
+        && ("upvotes" in reqData && reqData.upvotes == [])
+
+        // ... and the author must be the one making the request
+        && reqData.author == uid
+
+        // ... and created_at and updated_at must reflec the current server timestamp
+        && reqData.created_at == request.time
+        && reqData.updated_at == request.time
+      );
+    }
+
+    match /datasets/{dataset} {
       allow read;
-      allow update: if isDatasetOwner()
-                        // disallow modifying author
-                        && (!("author" in request.resource.data) || request.resource.data.author == request.auth.uid)
-                        // disallow modifying upvotes (by owner)
-                        && (!("upvotes" in request.resource.data) || request.resource.data.upvotes == resource.data.upvotes)
-                        // disallow modifying created_at
-                        && (!("created_at" in request.resource.data) || request.resource.data.created_at == resource.data.created_at)
-                        // update time can be only current
-                        && (!("updated_at" in request.resource.data) || request.resource.data.updated_at == request.time)
-                        || (isLoggedIn() && !isDatasetOwner() && incomingDataHasOnly('upvotes') && (
-                            // allow to add only own uid if it's not already there
-                            (onlyAddsOneElement('upvotes', request.auth.uid) && !resource.data.upvotes.hasAny([request.auth.uid]))
-                            // allow to delete only own uid
-                            || onlyRemovesOneElement('upvotes', request.auth.uid)
-                        ));
-      allow delete: if isDatasetOwner();
-      allow create: if isLoggedIn()
-                        // disallow setting non-empty upvotes
-                        && ("upvotes" in request.resource.data && request.resource.data.upvotes == [])
-                        // author must match to user's uid
-                        && request.resource.data.author == request.auth.uid
-                        // create & update time must be current
-                        && request.resource.data.created_at == request.time
-                        && request.resource.data.updated_at == request.time;
+      allow update: if canUpdateDatasetOrModel(request.resource.data, resource.data, request.auth.uid);
+      allow delete: if isDatasetOrModelOwner();
+      allow create: if canCreateDatasetOrModel(request.resource.data, request.auth.uid);
     }
 
     match /models/{model} {
-      function isModelOwner() {
-        return isLoggedIn() && request.auth.uid == resource.data.author
-      }
-
       allow read;
-      allow update: if isModelOwner()
-                        // disallow modifying author
-                        && (!("author" in request.resource.data) || request.resource.data.author == request.auth.uid)
-                        // disallow modifying upvotes (by owner)
-                        && (!("upvotes" in request.resource.data) || request.resource.data.upvotes == resource.data.upvotes)
-                        // disallow modifying created_at
-                        && (!("created_at" in request.resource.data) || request.resource.data.created_at == resource.data.created_at)
-                        // update time can be only current
-                        && (!("updated_at" in request.resource.data) || request.resource.data.updated_at == request.time)
-                        || (isLoggedIn() && !isModelOwner() && incomingDataHasOnly('upvotes') && (
-                            // allow to add only own uid if it's not already there
-                            (onlyAddsOneElement('upvotes', request.auth.uid) && !resource.data.upvotes.hasAny([request.auth.uid]))
-                            // allow to delete only own uid
-                            || onlyRemovesOneElement('upvotes', request.auth.uid)
-                        ));
-      allow delete: if isModelOwner();
-      allow create: if isLoggedIn()
-                        // disallow setting non-empty upvotes
-                        && ("upvotes" in request.resource.data && request.resource.data.upvotes == [])
-                        // author must match to user's uid
-                        && request.resource.data.author == request.auth.uid
-                        // create & update time must be current
-                        && request.resource.data.created_at == request.time
-                        && request.resource.data.updated_at == request.time;
+      allow update: if canUpdateDatasetOrModel(request.resource.data, resource.data, request.auth.uid);
+      allow delete: if isDatasetOrModelOwner();
+      allow create: if canCreateDatasetOrModel(request.resource.data, request.auth.uid);
     }
 
     match /users/{user} {
